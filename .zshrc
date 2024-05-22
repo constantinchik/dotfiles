@@ -41,12 +41,6 @@ alias  l='eza -lh  --icons=auto' # long list
 alias ls='eza -1   --icons=auto' # short list
 alias ll='eza -lha --icons=auto --sort=name --group-directories-first' # long list all
 alias ld='eza -lhD --icons=auto' # long list dirs
-alias un='$aurhelper -Rns' # uninstall package
-alias up='$aurhelper -Syu' # update system/package/aur
-alias pl='$aurhelper -Qs' # list installed package
-alias pa='$aurhelper -Ss' # list availabe package
-alias pc='$aurhelper -Sc' # remove unused cache
-alias po='$aurhelper -Qtdq | $aurhelper -Rns -' # remove unused packages, also try > $aurhelper -Qqd | $aurhelper -Rsu --print -
 alias vc='code --disable-gpu' # gui code editor
 
 # Keybindings
@@ -79,6 +73,12 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --icons=auto $realpath'
 eval "$(fzf --zsh)" # C-r opens fzf history search
 eval "$(zoxide init --cmd cd zsh)"
 
+# --- setup fzf theme ---
+export FZF_DEFAULT_OPTS=" \
+--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+--color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
+
 # NVM
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -91,11 +91,28 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
-# Helpers for other functions or aliases
-# TODO: Update for mac OS
-if pacman -Qi yay &>/dev/null ; then
-   aurhelper="yay"
-elif pacman -Qi paru &>/dev/null ; then
-   aurhelper="paru"
-fi
+# OS specific configuration
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux-specific configuration
+    
+    # Check for AUR helper
+    if pacman -Qi yay &>/dev/null ; then
+       aurhelper="yay"
+    elif pacman -Qi paru &>/dev/null ; then
+       aurhelper="paru"
+    fi
+    # AUR helper aliases
+    alias un='$aurhelper -Rns' # uninstall package
+    alias up='$aurhelper -Syu' # update system/package/aur
+    alias pl='$aurhelper -Qs' # list installed package
+    alias pa='$aurhelper -Ss' # list availabe package
+    alias pc='$aurhelper -Sc' # remove unused cache
+    alias po='$aurhelper -Qtdq | $aurhelper -Rns -' # remove unused packages, also try > $aurhelper -Qqd | $aurhelper -Rsu --print -
 
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # Mac-specific configuration
+    alias un='brew uninstall' # uninstall package
+    alias up='brew upgrade' # update system/package/aur
+    alias pl='brew list' # list installed package
+    alias pc='brew cleanup' # remove unused cache
+fi
