@@ -8,4 +8,7 @@ pyenv
 ripgrep
 tmux
 tree-sitter
-zsh
+kitty
+code
+ttf-jetbrains-mono-nerd
+ttf-hack-nerd

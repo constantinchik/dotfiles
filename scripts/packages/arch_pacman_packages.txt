@@ -1,4 +1,0 @@
-fzf
-eza
-zoxide
-code

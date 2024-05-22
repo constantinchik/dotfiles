@@ -109,3 +109,7 @@ propperly the code
   get a new .p10k.zsh file
 - If you used the script to install the packages and dotfiles and something
   went wrong - your configuration files are located in the
+
+## TODOs:
+
+- Tiling window manager for Mac OS (amethyst or swish or yabai)
