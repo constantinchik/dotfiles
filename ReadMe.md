@@ -9,13 +9,9 @@ This repository is highly inspired by
 
 ## Installation
 
-The automatic installaction covers almost everything, except for the plugins
-installation in tmux (this cannot be done with the shell command). To install
-those packages in tmux click `Ctrl+s I`.
-
 ### Automatic installation
 
-Simply run the:
+Simply run the following code from the root of this repository:
 
 ```bash
 ./scripts/setup.sh
@@ -23,6 +19,10 @@ Simply run the:
 
 Script and it will install all the required packages as well as apply all the
 dotfile configurations on your machine
+
+The automatic installaction covers almost everything, except for the plugins
+installation in tmux (this cannot be done with the shell command). To install
+those packages in tmux click `Ctrl+s I`.
 
 ### Manual installation
 
@@ -51,6 +51,18 @@ right package manager.
 To apply all of the configuration files to your local machine you need to first
 remove the old ones that are configured in this repository from `~/.config`
 repository and then run GNU Stow.
+
+```bash
+stow . -t ~
+```
+
+If you want to override the current configuration files, but apply them to this
+repository (after that you can either undo changes and run again or leave
+them) you should run:
+
+```bash
+stow . -t ~ --adopt
+```
 
 ## Updating
 
@@ -109,6 +121,14 @@ propperly the code
   get a new .p10k.zsh file
 - If you used the script to install the packages and dotfiles and something
   went wrong - your configuration files are located in the
+  `~/.config/backup/backup_DATE/` folder. To restore them you can use the
+  automatic script located in `./scripts/restore-backup.sh` and you need to
+  provide the backup folder. Example of usage:
+  ```bash
+  ./scripts/restore-backup.sh bakcup_20240522_213916
+  ```
+  This will replace all the files under `~/` that are the same relatively to
+  the backup folder.
 
 ## TODOs:
 

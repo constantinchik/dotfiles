@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Determine the directory where the script is located
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
 # Function to set the default shell to Homebrew's Zsh if it's not already set
 set_default_shell_to_brew_zsh() {
     echo "Checking if default shell needs to be set to Homebrew's Zsh..."
@@ -24,13 +27,11 @@ set_default_shell_to_brew_zsh() {
 }
 
 # Install packages
-./install-packages.sh
-# Install Tmux Plugin Manager
-./install_tpm.sh
+"$SCRIPT_DIR/install-packages.sh"
 
 # Detect the operating system and 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    # ...
+    echo "Detected Arch Linux"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     # MacOS
     set_default_shell_to_brew_zsh
@@ -39,5 +40,10 @@ else
     exit 1
 fi
 
-# TODO: Remove conflicting files
-# TODO: stow config files
+# Backup configurations
+"$SCRIPT_DIR/backup-configs.sh"
+
+echo "Symlinking dotfiles..."
+stow . -t ~ --adopt
+
+echo "Done."

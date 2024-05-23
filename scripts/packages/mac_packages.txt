@@ -9,3 +9,4 @@ ripgrep
 tmux
 tree-sitter
 zsh
+stow
