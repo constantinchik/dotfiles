@@ -8,6 +8,7 @@ pyenv
 ripgrep
 tmux
 tree-sitter
+imagemagick
 stow
 kitty
 ttf-jetbrains-mono-nerd

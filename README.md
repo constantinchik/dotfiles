@@ -7,6 +7,14 @@ of configuration for both MacOS machines and Arch-Linux machines.
 This repository is highly inspired by
 [Dreams of Autonomy](https://youtu.be/y6XCebnB9gs) way of managing dotfiles.
 
+Note that this repository has submodules for nvim configuration. In order for
+it to copy the nvim config you should clone this repo with
+`--recursive-submodules` flag.
+
+```bash
+git clone --recursive-submodules https://github.com/constantinchik/dotfiles
+```
+
 ## Installation
 
 ### Automatic installation

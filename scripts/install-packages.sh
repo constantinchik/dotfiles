@@ -21,6 +21,10 @@ install_mac_packages() {
     # Add brew taps
     cat "$SCRIPT_DIR/packages/mac_packages.txt" | xargs brew install
     cat "$SCRIPT_DIR/packages/mac_cask_packages.txt" | xargs brew install --cask
+
+    # Other hacks for MacOS
+    # install magick via luarocks
+    luarocks --lua-version=5.1 install magick
 }
 
 # Detect the operating system and install packages
