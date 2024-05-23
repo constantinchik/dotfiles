@@ -16,13 +16,11 @@ install_mac_packages() {
         echo "Installing Hombrew"
         /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     else
-        echo "Updating Homebrew"
         brew update
     fi
     # Add brew taps
-    xargs -a "$SCRIPT_DIR/packages/mac_brew_taps.txt" brew tap
-    xargs -a "$SCRIPT_DIR/packages/mac_packages.txt" brew install
-    xargs -a "$SCRIPT_DIR/packages/mac_cask_packages.txt" brew install --cask
+    cat "$SCRIPT_DIR/packages/mac_packages.txt" | xargs brew install
+    cat "$SCRIPT_DIR/packages/mac_cask_packages.txt" | xargs brew install --cask
 }
 
 # Detect the operating system and install packages
@@ -32,7 +30,6 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Detected macOS"
     install_mac_packages
-    set_default_shell_to_brew_zsh
 else
     echo "Unsupported OS"
     exit 1
