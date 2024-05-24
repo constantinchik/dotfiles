@@ -1,12 +1,13 @@
 #!/bin/bash
 
+echo "Installing packages..."
 # Determine the directory where the script is located
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Function to install Arch Linux packages
 install_arch_packages() {
-    xargs -a "$SCRIPT_DIR/packages/arch_pacman_packages.txt" sudo pacman -Syu
-    xargs -a "$SCRIPT_DIR/packages/arch_yay_packages.txt" yay -S
+    xargs -a "$SCRIPT_DIR/arch_pacman_packages.txt" sudo pacman -Syu
+    xargs -a "$SCRIPT_DIR/arch_yay_packages.txt" yay -S
 }
 
 # Function to install macOS packages
@@ -19,8 +20,8 @@ install_mac_packages() {
         brew update
     fi
     # Add brew taps
-    cat "$SCRIPT_DIR/packages/mac_packages.txt" | xargs brew install
-    cat "$SCRIPT_DIR/packages/mac_cask_packages.txt" | xargs brew install --cask
+    cat "$SCRIPT_DIR/mac_packages.txt" | xargs brew install
+    cat "$SCRIPT_DIR/mac_cask_packages.txt" | xargs brew install --cask
 
     # Other hacks for MacOS
     # install magick via luarocks

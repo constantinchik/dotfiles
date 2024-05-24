@@ -1,0 +1,4 @@
+catppuccin.catppuccin-vsc
+eamodio.gitlens
+pkief.material-icon-theme
+vscodevim.vim

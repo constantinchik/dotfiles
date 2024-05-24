@@ -27,7 +27,7 @@ set_default_shell_to_brew_zsh() {
 }
 
 # Install packages
-"$SCRIPT_DIR/install-packages.sh"
+"$SCRIPT_DIR/packages/install-packages.sh"
 
 # Detect the operating system and 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -40,10 +40,17 @@ else
     exit 1
 fi
 
+# Install vscode extensions
+"$SCRIPT_DIR/vscode/install-extensions.sh"
+
 # Backup configurations
 "$SCRIPT_DIR/backup-configs.sh"
 
 echo "Symlinking dotfiles..."
 stow . -t ~ --adopt
 
-echo "Done."
+echo "Done!"
+echo "The config files were symlinked and your files overriden the ones in this repository."
+echo "Please check these file changes. If you do not need some of them just run 'git checkout -- <file>' to revert the change in file."
+echo "Or 'git choeckout .' to revert all changes."
+echo "After that do restart your terminal to apply the changes."

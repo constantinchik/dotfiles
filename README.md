@@ -26,7 +26,16 @@ Simply run the following code from the root of this repository:
 ```
 
 Script and it will install all the required packages as well as apply all the
-dotfile configurations on your machine
+dotfile configurations on your machine.
+
+Note that if some of your files from this repository already existed on your
+system, then after running this command they will override the ones that are
+located in this repository, but the symlinks will be created. To undo the
+changes made simply run the following command:
+
+```bash
+git checkout .
+```
 
 The automatic installaction covers almost everything, except for the plugins
 installation in tmux (this cannot be done with the shell command). To install
