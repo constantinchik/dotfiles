@@ -46,11 +46,15 @@ fi
 # Backup configurations
 "$SCRIPT_DIR/backup-configs.sh"
 
+# Create required subfolders before STOW
+"$SCRIPT_DIR/create-subfolders.sh"
+
 echo "Symlinking dotfiles..."
+cd "$SCRIPT_DIR/.."
 stow . -t ~ --adopt
 
 echo "Done!"
 echo "The config files were symlinked and your files overriden the ones in this repository."
 echo "Please check these file changes. If you do not need some of them just run 'git checkout -- <file>' to revert the change in file."
-echo "Or 'git choeckout .' to revert all changes."
+echo "Or 'git checkout .' to revert all changes."
 echo "After that do restart your terminal to apply the changes."

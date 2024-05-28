@@ -1,4 +1,10 @@
+angular.ng-template
 catppuccin.catppuccin-vsc
+dbaeumer.vscode-eslint
 eamodio.gitlens
+esbenp.prettier-vscode
 pkief.material-icon-theme
+stylelint.vscode-stylelint
+undefined_publisher.wallbash
+unifiedjs.vscode-mdx
 vscodevim.vim

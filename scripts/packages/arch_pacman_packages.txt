@@ -13,3 +13,4 @@ stow
 kitty
 ttf-jetbrains-mono-nerd
 ttf-hack-nerd
+unzip

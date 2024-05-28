@@ -7,7 +7,7 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # Function to install Arch Linux packages
 install_arch_packages() {
     xargs -a "$SCRIPT_DIR/arch_pacman_packages.txt" sudo pacman -Syu
-    xargs -a "$SCRIPT_DIR/arch_yay_packages.txt" yay -S
+    xargs -a "$SCRIPT_DIR/arch_yay_packages.txt" yay -Syu
 }
 
 # Function to install macOS packages
@@ -43,6 +43,11 @@ fi
 # Install other packages/tools required:
 # NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+# Install default node 20
+nvm install 20
+# Enable pnpm
+corepack enable pnpm
+
 
 # Tmux Plugin Manager
 if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then

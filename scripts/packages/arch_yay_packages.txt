@@ -1,1 +1,1 @@
-vscoduim-bin
+vscodium-bin

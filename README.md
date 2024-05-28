@@ -12,7 +12,7 @@ it to copy the nvim config you should clone this repo with
 `--recursive-submodules` flag.
 
 ```bash
-git clone --recursive-submodules https://github.com/constantinchik/dotfiles
+git clone --recurse-submodules https://github.com/constantinchik/dotfiles
 ```
 
 ## Installation
@@ -150,3 +150,5 @@ propperly the code
 ## TODOs:
 
 - Tiling window manager for Mac OS (amethyst or swish or yabai)
+- Update config for Code-OSS on mac OS
+- Fix issue with neovim not starting propperly because of magick

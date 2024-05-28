@@ -9,5 +9,5 @@ ripgrep
 tmux
 tree-sitter
 zsh
-imagemagick
 stow
+unzip

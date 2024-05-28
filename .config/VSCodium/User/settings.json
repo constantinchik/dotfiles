@@ -34,7 +34,7 @@
   "git.enableSmartCommit": true,
   "diffEditor.ignoreTrimWhitespace": false,
   "workbench.colorTheme": "Catppuccin Mocha",
-  "workbench.iconTheme": "catppuccin-mocha",
+  "workbench.iconTheme": "material-icon-theme",
   "material-icon-theme.activeIconPack": "angular",
   "npm.keybindingsChangedWarningShown": true,
   "python.languageServer": "Pylance",
