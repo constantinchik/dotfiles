@@ -11,3 +11,6 @@ tree-sitter
 zsh
 stow
 unzip
+lazygit
+diff-so-fancy
+less

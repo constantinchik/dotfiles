@@ -43,6 +43,7 @@ alias ll='eza -lha --icons=auto --sort=name --group-directories-first' # long li
 alias ld='eza -lhD --icons=auto' # long list dirs
 alias vc='codium --disable-gpu' # gui code editor
 alias code='codium'
+alias lg='lazygit'
 
 # Keybindings
 # TODO: Try vim

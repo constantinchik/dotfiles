@@ -14,3 +14,6 @@ kitty
 ttf-jetbrains-mono-nerd
 ttf-hack-nerd
 unzip
+lazygit
+diff-so-fancy
+less

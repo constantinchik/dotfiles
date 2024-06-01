@@ -57,3 +57,7 @@ if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
     echo "TPM installed successfully."
 fi
 
+# Install git global pager:
+git config --global core.pager "diff-so-fancy | less --tabs=4 -RF"
+git config --global interactive.diffFilter "diff-so-fancy --patch"
+git config --global diff-so-fancy.rulerWidth 80
