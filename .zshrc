@@ -123,3 +123,6 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     alias pl='brew list' # list installed package
     alias pc='brew cleanup' # remove unused cache
 fi
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"

@@ -43,11 +43,18 @@ fi
 # Install other packages/tools required:
 # NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-# Install default node 20
-nvm install 20
-# Enable pnpm
-corepack enable pnpm
-
+# Prompt for input
+read -p "Do you want to setup NodeJS 20 via NVM? (Y/N): " answer
+answer=$(echo "$answer" | tr '[:lower:]' '[:upper:]')
+if [[ "$answer" == "Y" || "$answer" == "YES" ]]; then
+    echo "Installing NodeJS 20 via NVM..."
+    nvm install 20
+    nvm alias default 20
+    # Enable pnpm
+    corepack enable pnpm
+else
+    echo "Skipped. NodeJS 20 not installed."
+fi
 
 # Tmux Plugin Manager
 if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
@@ -57,7 +64,20 @@ if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
     echo "TPM installed successfully."
 fi
 
-# Install git global pager:
+# Install diff-so-fancy as a git pager
 git config --global core.pager "diff-so-fancy | less --tabs=4 -RF"
 git config --global interactive.diffFilter "diff-so-fancy --patch"
 git config --global diff-so-fancy.rulerWidth 80
+
+# Install RVM (Ruby Version Manager)
+curl -sSL https://get.rvm.io | bash
+
+read -p "Do you want to install Ruby 3.3.1 via RVM? (Y/N): " answer
+answer=$(echo "$answer" | tr '[:lower:]' '[:upper:]')
+if [[ "$answer" == "Y" || "$answer" == "YES" ]]; then
+    echo "Installing Ruby 3.3.1 via RVM..."
+    rvm install ruby-3.3.1
+    rvm use 3.3.1 --default
+else
+    echo "Skipped. NodeJS 20 not installed."
+fi
