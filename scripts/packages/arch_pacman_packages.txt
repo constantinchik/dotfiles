@@ -17,4 +17,3 @@ unzip
 lazygit
 diff-so-fancy
 less
-dualsensectl

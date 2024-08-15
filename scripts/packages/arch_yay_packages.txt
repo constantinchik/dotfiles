@@ -1,1 +1,2 @@
 vscodium-bin
+dualsensectl
