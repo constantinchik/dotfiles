@@ -3,6 +3,11 @@
 # Determine the directory where the script is located
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
+echo "Installing dotfiles..."
+
+echo "Backing up your current dotfiles, so you can restore if needed."
+"$SCRIPT_DIR/backup-configs.sh"
+
 # Function to set the default shell to Homebrew's Zsh if it's not already set
 set_default_shell_to_brew_zsh() {
     echo "Checking if default shell needs to be set to Homebrew's Zsh..."
@@ -43,18 +48,33 @@ fi
 # Install vscode extensions
 "$SCRIPT_DIR/vscode/install-extensions.sh"
 
-# Backup configurations
-"$SCRIPT_DIR/backup-configs.sh"
-
 # Create required subfolders before STOW
 "$SCRIPT_DIR/create-subfolders.sh"
 
 echo "Symlinking dotfiles..."
 cd "$SCRIPT_DIR/.."
+# Protect changes before running
+git add -A
+# Symlink dotfiles
 stow . -t ~ --adopt
+# Restore --adopt changes 
+git checkout .
+# Or show this message instead
+# echo "The config files were symlinked and your files overriden the ones in this repository."
+# echo "Please check these file changes. If you do not need some of them just run 'git checkout -- <file>' to revert the change in file."
+# echo "Or 'git checkout .' to revert all changes."
+# echo "After that do restart your terminal to apply the changes."
 
-echo "Done!"
-echo "The config files were symlinked and your files overriden the ones in this repository."
-echo "Please check these file changes. If you do not need some of them just run 'git checkout -- <file>' to revert the change in file."
-echo "Or 'git checkout .' to revert all changes."
-echo "After that do restart your terminal to apply the changes."
+# Install zsh plugins
+exec zsh
+
+echo "Done! Reloading ~/.zshrc"
+
+# Sourcing new dotfiles
+source ~/.zshrc
+
+echo "---------------------------"
+echo "The script has finished executing. Please reload the terminal and check"
+echo "that changes have taken the effect."
+echo "If anything goes wrong - feel free to use ./restore-backup.sh to restore"
+echo "your previous configuration"
