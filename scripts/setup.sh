@@ -31,19 +31,24 @@ set_default_shell_to_brew_zsh() {
     fi
 }
 
+set_default_shell_to_zsh() {
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+      echo "Detected Linux"
+      chsh -s $(which zsh)
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+      # MacOS
+      set_default_shell_to_brew_zsh
+  else
+      echo "Unsupported OS"
+      exit 1
+  fi
+}
+
 # Install packages
 "$SCRIPT_DIR/packages/install-packages.sh"
 
-# Detect the operating system and 
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    echo "Detected Arch Linux"
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-    # MacOS
-    set_default_shell_to_brew_zsh
-else
-    echo "Unsupported OS"
-    exit 1
-fi
+# Detect the operating system and setup zsh if needed
+set_default_shell_to_zsh
 
 # Install vscode extensions
 "$SCRIPT_DIR/vscode/install-extensions.sh"

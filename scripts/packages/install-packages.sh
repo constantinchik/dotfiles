@@ -4,10 +4,27 @@ echo "Installing packages..."
 # Determine the directory where the script is located
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-# Function to install Arch Linux packages
-install_arch_packages() {
-    xargs -a "$SCRIPT_DIR/arch_pacman_packages.txt" sudo pacman -Syu
-    xargs -a "$SCRIPT_DIR/arch_yay_packages.txt" yay -Syu
+# Function to install Linux packages
+install_linux_packages() {
+    if [ -x "$(command -v pacman)" ]; then
+      xargs -a "$SCRIPT_DIR/arch_pacman_packages.txt" sudo pacman -Syu
+      xargs -a "$SCRIPT_DIR/arch_yay_packages.txt" yay -Syu
+    elif [ -x "$(command -v apt-get)" ]; then
+      sudo add-apt-repository ppa:aos1/diff-so-fancy
+      xargs -a "$SCRIPT_DIR/apt_packages.txt" sudo apt-get install
+      # pyenv:
+      curl https://pyenv.run | bash
+      # Lazy Git
+      LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
+      curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+      tar xf lazygit.tar.gz lazygit
+      sudo install lazygit -D -t /usr/local/bin/
+      rm lazygit.tar.gz
+      rm lazygit
+    else
+      echo "Unsupported package manager..."
+      exit 1
+    fi
 }
 
 # Function to install macOS packages
@@ -30,8 +47,8 @@ install_mac_packages() {
 
 # Detect the operating system and install packages
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    echo "Detected Arch Linux"
-    install_arch_packages
+    echo "Detected Linux"
+    install_linux_packages
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Detected macOS"
     install_mac_packages
