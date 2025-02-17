@@ -12,7 +12,7 @@ it to copy the nvim config you should clone this repo with
 `--recursive-submodules` flag.
 
 ```bash
-git clone --recurse-submodules https://github.com/constantinchik/dotfiles
+git clone --recurse-submodules git@github.com:constantinchik/dotfiles.git
 ```
 
 ## Installation
