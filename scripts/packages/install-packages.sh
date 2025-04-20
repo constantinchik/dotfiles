@@ -29,20 +29,29 @@ install_linux_packages() {
 
 # Function to install macOS packages
 install_mac_packages() {
-    # Ensure homebrew is installed
-    if [[ $(command -v brew) == "" ]]; then
-        echo "Installing Hombrew"
-        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    # Check if Homebrew is already installed
+    if command -v brew &> /dev/null; then
+        echo "Homebrew is already installed."
     else
-        brew update
+        echo "Homebrew is not installed. Installing..."
+        # Install Homebrew using the official installation script
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        # Check if the installation was successful
+        if [ $? -eq 0 ]; then
+            echo "Homebrew installation successful."
+            # Add Homebrew to PATH
+            echo >> ~/.zprofile
+            echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+            echo "Homebrew environment set."
+        else
+            echo "Homebrew installation failed."
+            exit 1
+        fi
     fi
     # Add brew taps
     cat "$SCRIPT_DIR/mac_packages.txt" | xargs brew install
     cat "$SCRIPT_DIR/mac_cask_packages.txt" | xargs brew install --cask
-
-    # Other hacks for MacOS
-    # install magick via luarocks
-    luarocks --lua-version=5.1 install magick
 }
 
 # Detect the operating system and install packages
@@ -52,6 +61,9 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Detected macOS"
     install_mac_packages
+    # Other hacks for MacOS
+    # install magick via luarocks
+    luarocks --lua-version=5.1 install magick
 else
     echo "Unsupported OS"
     exit 1
@@ -60,7 +72,7 @@ fi
 # Install other packages/tools required:
 
 # Install nvm if not exists
-if ! command -v nvm 2>&1 >/dev/null
+if ! command -v nvm &> /dev/null; then
 then
     echo "Installing nvm:"
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash

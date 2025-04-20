@@ -14,3 +14,4 @@ unzip
 lazygit
 diff-so-fancy
 less
+luarocks
