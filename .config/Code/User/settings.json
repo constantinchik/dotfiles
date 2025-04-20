@@ -5,6 +5,8 @@
     "workbench.iconTheme"
   ],
   "window.menuBarVisibility": "toggle",
+  "editor.guides.highlightActiveIndentation": "always",
+  "editor.guides.bracketPairs": true,
   "editor.scrollbar.vertical": "hidden",
   "editor.scrollbar.verticalScrollbarSize": 0,
   "editor.fontFamily": "'JetBrainsMono Nerd Font', 'CaskaydiaCove Nerd Font Mono', 'CaskaydiaCove NF', 'CaskaydiaCove NFM', 'CaskaydiaCove NF Mono', Fira Code, Source Code Pro, Consolas, Menlo, Monaco, 'Courier New', monospace",
@@ -16,6 +18,7 @@
   "editor.inlineSuggest.enabled": true,
   "editor.tabSize": 2,
   "editor.lineNumbers": "relative",
+  "editor.minimap.enabled": false,
   // "editor.formatOnSaveMode": "modifications",
   // "breadcrumbs.enabled": false,
   "files.autoSave": "onFocusChange",
@@ -28,14 +31,12 @@
   },
   "typescript.updateImportsOnFileMove.enabled": "always",
   "explorer.confirmDelete": false,
-  "window.zoomLevel": 1,
   "gitlens.defaultDateStyle": "absolute",
   "git.autofetch": true,
   "git.enableSmartCommit": true,
   "diffEditor.ignoreTrimWhitespace": false,
-  "workbench.colorTheme": "Catppuccin Mocha",
-  "workbench.iconTheme": "material-icon-theme",
-  "material-icon-theme.activeIconPack": "angular",
+  "workbench.iconTheme": "vscode-icons",
+  "vsicons.dontShowNewVersionMessage": true,
   "npm.keybindingsChangedWarningShown": true,
   "python.languageServer": "Pylance",
   "python.envFile": "${workspaceFolder}/env",
@@ -48,7 +49,7 @@
   "debug.allowBreakpointsEverywhere": true,
   "workbench.editor.labelFormat": "short",
   "terminal.integrated.defaultProfile.osx": "zsh",
-  "terminal.external.osxExec": "iTerm.app",
+  "terminal.external.osxExec": "kitty.app",
   "terminal.external.linuxExec": "kitty",
   "github.copilot.enable": {
     "*": true,
@@ -256,4 +257,3 @@
     { "before": ["leader", "x"], "commands": [":x!"] }
   ]
 }
-
