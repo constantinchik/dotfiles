@@ -19,9 +19,9 @@ source "${ZINIT_HOME}/zinit.zsh"
 zinit ice depth=1; zinit light romkatv/powerlevel10k
 
 # Add in zsh plugins
+zinit light zsh-users/zsh-autosuggestions
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
-zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
 zinit light chrissicool/zsh-256color
 
@@ -32,7 +32,7 @@ zinit snippet OMZP::archlinux
 zinit snippet OMZP::command-not-found
 
 # Vim mode
-zinit light jeffreytse/zsh-vi-mode
+zinit light softmoth/zsh-vim-mode
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -45,8 +45,7 @@ alias ld='eza -lhD --icons=auto' # long list dirs
 alias lg='lazygit'
 
 # Keybindings
-# TODO: Try vim
-bindkey -e # C-b -> move back; C-f -> move forward; C-a -> move to beginning of line; C-e -> move to end of line; 
+bindkey -v
 bindkey '^y' autosuggest-accept
 bindkey '^p' history-search-backward # only show result that match the current input as prefix
 bindkey '^n' history-search-forward  # only show result that match the current input as prefix
