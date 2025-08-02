@@ -129,6 +129,9 @@ propperly the code
     fzf menu
   - [zsh-256color](https://github.com/chrissicool/zsh-256color) for wider color
     support in zsh
+- [yabai](https://github.com/koekeishiya/yabai) tiling window manager. Configured
+  but not recommended to use, as it has strict security requirements, that
+  ususally are not allowed on the work machines.
 
 ## Troubleshooting
 
