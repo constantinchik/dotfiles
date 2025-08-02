@@ -152,3 +152,7 @@ propperly the code
 - Tiling window manager for Mac OS (amethyst or swish or yabai)
 - Update config for Code-OSS on mac OS
 - Fix issue with neovim not starting propperly because of magick
+
+## Usefull tools
+
+- `ncdu /` runs the disk scan for large files.

@@ -16,3 +16,4 @@ diff-so-fancy
 less
 luarocks
 stats
+ncdu
