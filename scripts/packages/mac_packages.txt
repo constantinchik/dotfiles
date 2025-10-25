@@ -17,3 +17,4 @@ less
 luarocks
 stats
 ncdu
+oven-sh/bun/bun
