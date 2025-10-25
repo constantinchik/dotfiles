@@ -125,3 +125,29 @@ fi
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 
+
+# bun completions
+[ -s "/Users/cost/.bun/_bun" ] && source "/Users/cost/.bun/_bun"
+
+# Import secrets
+for file in ~/.zshrc.{secrets,local}; do
+    [[ -f "$file" ]] && source "$file"
+done
+
+# Verify critical environment variables
+check_env_vars() {
+    local missing=()
+    local vars=("GITHUB_PERSONAL_ACCESS_TOKEN")
+    
+    for var in "${vars[@]}"; do
+        [[ -z "${(P)var}" ]] && missing+=("$var")
+    done
+    
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        echo "⚠️  Missing environment variables claude desktop might not work: ${missing[*]}"
+        echo "   Create ~/.zshrc.secrets from ~/.zshrc.secrets.template"
+    fi
+}
+
+# Run check on shell startup (optional)
+check_env_vars

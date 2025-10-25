@@ -1,2 +1,4 @@
 # ignored files
 .DS_Store
+
+.zshrc.secrets
