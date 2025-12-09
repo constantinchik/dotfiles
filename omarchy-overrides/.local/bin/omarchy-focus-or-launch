@@ -26,5 +26,10 @@ command -v jq &>/dev/null || notify_error "jq not found"
 if hyprctl clients -j 2>/dev/null | jq -e ".[] | select(.class == \"$WINDOW_CLASS\")" > /dev/null 2>&1; then
     hyprctl dispatch focuswindow "class:^${WINDOW_CLASS}$" || notify_error "Failed to focus window: $WINDOW_CLASS"
 else
-    eval "$LAUNCH_CMD" &disown || notify_error "Failed to launch: $LAUNCH_CMD"
+    # Extract the command name (first word) and check if it exists
+    CMD_NAME="${LAUNCH_CMD%% *}"
+    if ! command -v "$CMD_NAME" &>/dev/null; then
+        notify_error "Command not found: $CMD_NAME"
+    fi
+    eval "$LAUNCH_CMD" &disown
 fi
