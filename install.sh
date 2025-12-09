@@ -10,10 +10,20 @@ echo "==================================="
 echo "       Dotfiles Installation       "
 echo "==================================="
 
+# Check if running on Omarchy
+is_omarchy() {
+    [ -d "$HOME/.config/omarchy" ]
+}
+
 # Detect OS
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    echo "Detected: Linux"
-    "$SCRIPT_DIR/install-linux.sh"
+    if is_omarchy; then
+        echo "Detected: Omarchy (Linux)"
+        "$SCRIPT_DIR/install-omarchy-overrides.sh"
+    else
+        echo "Detected: Linux"
+        "$SCRIPT_DIR/install-linux.sh"
+    fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Detected: macOS"
     "$SCRIPT_DIR/install-macos.sh"

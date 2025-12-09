@@ -1,0 +1,21 @@
+#!/bin/bash
+# Launch Soundux with Wayland workarounds
+# Idempotent: safe to run multiple times
+
+set -euo pipefail
+
+notify_error() {
+    notify-send -u critical "omarchy-launch-soundux" "$1"
+    exit 1
+}
+
+# Check if soundux is installed
+command -v soundux &>/dev/null || notify_error "Soundux is not installed. Install with: yay -S soundux"
+
+# Soundux has issues with Wayland's GDK backend and WebKit rendering
+# These environment variables fix the crashes and blank window issues
+export GDK_BACKEND=x11
+export WEBKIT_DISABLE_COMPOSITING_MODE=1
+export WEBKIT_DISABLE_DMABUF_RENDERER=1
+
+exec setsid uwsm-app -- /usr/bin/soundux "$@"
