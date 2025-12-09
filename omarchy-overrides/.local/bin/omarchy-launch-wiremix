@@ -1,0 +1,15 @@
+#!/bin/bash
+# Launch or focus Wiremix audio mixer
+# Idempotent: safe to run multiple times
+
+set -euo pipefail
+
+notify_error() {
+    notify-send -u critical "omarchy-launch-wiremix" "$1"
+    exit 1
+}
+
+# Check if omarchy-launch-or-focus-tui exists
+command -v omarchy-launch-or-focus-tui &>/dev/null || notify_error "omarchy-launch-or-focus-tui not found"
+
+exec omarchy-launch-or-focus-tui wiremix

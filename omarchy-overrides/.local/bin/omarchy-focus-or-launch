@@ -1,0 +1,30 @@
+#!/bin/bash
+# Focus window if exists, otherwise launch application
+# Usage: omarchy-focus-or-launch <window_class> <command>
+# Idempotent: safe to run multiple times
+
+set -euo pipefail
+
+notify_error() {
+    notify-send -u critical "omarchy-focus-or-launch" "$1"
+    exit 1
+}
+
+if [[ $# -lt 2 ]]; then
+    notify_error "Usage: omarchy-focus-or-launch <window_class> <command>"
+fi
+
+WINDOW_CLASS="$1"
+shift
+LAUNCH_CMD="$*"
+
+# Check if required tools are available
+command -v hyprctl &>/dev/null || notify_error "hyprctl not found"
+command -v jq &>/dev/null || notify_error "jq not found"
+
+# Check if window exists and focus it, otherwise launch
+if hyprctl clients -j 2>/dev/null | jq -e ".[] | select(.class == \"$WINDOW_CLASS\")" > /dev/null 2>&1; then
+    hyprctl dispatch focuswindow "class:^${WINDOW_CLASS}$" || notify_error "Failed to focus window: $WINDOW_CLASS"
+else
+    eval "$LAUNCH_CMD" &disown || notify_error "Failed to launch: $LAUNCH_CMD"
+fi

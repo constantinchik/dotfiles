@@ -1,0 +1,49 @@
+#!/bin/bash
+# Launch or focus the default browser
+# Idempotent: safe to run multiple times
+
+set -euo pipefail
+
+notify_error() {
+    notify-send -u critical "omarchy-launch-or-focus-browser" "$1"
+    exit 1
+}
+
+# Check required tools
+command -v hyprctl &>/dev/null || notify_error "hyprctl not found"
+command -v jq &>/dev/null || notify_error "jq not found"
+command -v xdg-settings &>/dev/null || notify_error "xdg-settings not found"
+
+# Get the default browser executable
+default_browser=$(xdg-settings get default-web-browser 2>/dev/null) || notify_error "Could not determine default browser"
+
+if [[ -z "$default_browser" ]]; then
+    notify_error "No default browser configured"
+fi
+
+browser_exec=$(sed -n 's/^Exec=\([^ ]*\).*/\1/p' ~/.local/share/applications/"$default_browser" ~/.nix-profile/share/applications/"$default_browser" /usr/share/applications/"$default_browser" 2>/dev/null | head -1)
+
+if [[ -z "$browser_exec" ]]; then
+    notify_error "Could not find browser executable for: $default_browser"
+fi
+
+# Handle private/incognito flag if needed
+if [[ $browser_exec =~ (firefox|zen|librewolf) ]]; then
+    private_flag="--private-window"
+else
+    private_flag="--incognito"
+fi
+
+# Extract browser name for window matching
+browser_name=$(basename "$browser_exec")
+
+# Try to find an existing browser window
+WINDOW_ADDRESS=$(hyprctl clients -j 2>/dev/null | jq -r --arg p "$browser_name" '.[]|select((.class|test($p;"i")))|.address' | head -n1)
+
+if [[ -n "$WINDOW_ADDRESS" ]]; then
+    # Focus existing window
+    hyprctl dispatch focuswindow "address:$WINDOW_ADDRESS" || notify_error "Failed to focus browser window"
+else
+    # Launch new browser window
+    exec setsid uwsm-app -- "$browser_exec" "${@/--private/$private_flag}"
+fi
