@@ -90,6 +90,35 @@ else
 fi
 
 # ╔══════════════════════════════════════════════════════════════════════╗
+# ║                     STOW PERSONAL CONFIGS                            ║
+# ╚══════════════════════════════════════════════════════════════════════╝
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Stowing personal configs (with --adopt for review)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Personal config packages to stow (order matters for dependencies)
+PERSONAL_CONFIGS=(nvim tmux)
+
+for pkg in "${PERSONAL_CONFIGS[@]}"; do
+    if [[ -d "$SCRIPT_DIR/$pkg" ]]; then
+        echo "Stowing $pkg with --adopt..."
+        if stow -t ~ --adopt "$pkg" 2>/dev/null; then
+            echo "  ✓ $pkg stowed (check git diff to review adopted changes)"
+        else
+            echo "  ✗ $pkg failed to stow"
+        fi
+    else
+        echo "  - $pkg directory not found, skipping"
+    fi
+done
+
+echo ""
+echo "NOTE: Run 'git diff' to review any adopted changes from your system."
+echo "      Use 'git checkout <package>' to restore repo versions if needed."
+
+# ╔══════════════════════════════════════════════════════════════════════╗
 # ║                    ADD HYPRLAND SOURCE LINE                          ║
 # ╚══════════════════════════════════════════════════════════════════════╝
 
@@ -173,12 +202,16 @@ echo "╚═══════════════════════�
 echo ""
 echo "Installed components:"
 echo "  • Hyprland overrides (monitors, input, bindings, animations)"
+echo "  • Personal configs (nvim, kitty, lazygit, tmux) - with --adopt"
 echo "  • Custom utility scripts (~/.local/bin/)"
 echo "  • Pyprland configuration"
 echo "  • Waybar indicators (NordVPN, Wiremix)"
 echo "  • Bash aliases (lg, gst)"
 echo "  • Xbox USB controller support"
 echo "  • LSP plugin entries hidden"
+echo ""
+echo "⚠  Review adopted changes: git diff"
+echo "   Restore repo versions:  git checkout <package>"
 echo ""
 
 notify_success "Omarchy overrides installation complete!"
