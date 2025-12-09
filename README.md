@@ -2,10 +2,11 @@
 
 This repository contains my dotfiles, so that it is easy to configure a new
 machine for my needs. The goal of this repository is to achieve single place
-of configuration for both MacOS machines and Arch-Linux machines.
+of configuration for both macOS machines and Arch-Linux machines.
 
 This repository is highly inspired by
-[Dreams of Autonomy](https://youtu.be/y6XCebnB9gs) way of managing dotfiles.
+[Dreams of Autonomy](https://youtu.be/y6XCebnB9gs) and
+[typecraft](https://github.com/typecraft-dev/dotfiles) way of managing dotfiles.
 
 Note that this repository has submodules for nvim configuration. In order for
 it to copy the nvim config you should clone this repo with
@@ -15,75 +16,104 @@ it to copy the nvim config you should clone this repo with
 git clone --recurse-submodules git@github.com:constantinchik/dotfiles.git
 ```
 
+## Repository Structure
+
+This repository uses [GNU Stow](https://www.gnu.org/software/stow/) with separate
+packages for each application. OS-specific configurations are separated into
+their own packages.
+
+```
+dotfiles/
+├── zsh/              # Shared zsh config (.zshrc, .p10k.zsh)
+├── zsh-linux/        # Linux-specific zsh additions
+├── zsh-macos/        # macOS-specific zsh additions
+├── nvim/             # Neovim configuration (submodule)
+├── kitty/            # Kitty terminal emulator
+├── lazygit/          # Lazygit configuration
+├── tmux/             # Tmux configuration
+├── vscode/           # VS Code settings
+├── yabai/            # macOS-only (tiling wm)
+├── scripts/          # Installation and utility scripts
+├── install.sh        # Main install script (auto-detects OS)
+├── install-linux.sh  # Linux-specific installation
+└── install-macos.sh  # macOS-specific installation
+```
+
+### Stow Packages
+
+**Shared (cross-platform):**
+- `zsh` - Zsh shell configuration
+- `nvim` - Neovim editor
+- `kitty` - Terminal emulator
+- `lazygit` - Git TUI
+- `tmux` - Terminal multiplexer
+- `vscode` - VS Code settings
+
+**Linux-specific:**
+- `zsh-linux` - Arch Linux aliases and AUR helper config
+
+**macOS-specific:**
+- `zsh-macos` - Homebrew aliases
+- `yabai` - Tiling window manager
+
 ## Installation
 
-### Automatic installation
+### Automatic Installation
 
-Simply run the following code from the root of this repository:
-
-```bash
-./scripts/setup.sh
-```
-
-Script and it will install all the required packages as well as apply all the
-dotfile configurations on your machine.
-
-Note that if some of your files from this repository already existed on your
-system, then after running this command they will override the ones that are
-located in this repository, but the symlinks will be created. To undo the
-changes made simply run the following command:
+Simply run the main install script which auto-detects your OS:
 
 ```bash
-git checkout .
+./install.sh
 ```
 
-The automatic installaction covers almost everything, except for the plugins
-installation in tmux (this cannot be done with the shell command). To install
-those packages in tmux click `Ctrl+s I`.
+Or run the OS-specific script directly:
 
-### Manual installation
+```bash
+# On Linux
+./install-linux.sh
 
-In order to work with these dotfiles you can either copy them to your $HOME (~)
-location, or you can use [GNU Stow](https://www.gnu.org/software/stow/) to
-symlink them in place.
+# On macOS
+./install-macos.sh
+```
 
-In order for the configuration to work you need to have the right packages
-installed. For that there is a `./scripts/install-packages.sh` script, by running
-which you will ensure that all of the required packages are installed and in
-place.
+The install script will:
+1. Backup your existing configs
+2. Install required packages
+3. Stow all relevant packages for your OS
+4. Set zsh as default shell
+
+### Manual Installation
 
 #### Install packages
 
-To install all packages simply run:
-
 ```bash
-./scripts/install_packages.sh
+./scripts/packages/install-packages.sh
 ```
 
-This script will detect your system and install the right packages from the
-right package manager.
+#### Stow packages manually
 
-#### Apply dotfiles using GNU Stow
-
-To apply all of the configuration files to your local machine you need to first
-remove the old ones that are configured in this repository from `~/.config`
-repository and then run GNU Stow.
-
+On Linux:
 ```bash
-stow . -t ~
+stow zsh zsh-linux nvim kitty lazygit tmux vscode
 ```
 
-If you want to override the current configuration files, but apply them to this
-repository (after that you can either undo changes and run again or leave
-them) you should run:
-
+On macOS:
 ```bash
-stow . -t ~ --adopt
+stow zsh zsh-macos nvim kitty lazygit tmux vscode yabai
 ```
 
-## Updating
+#### Using --adopt
 
-Updating should be the same process as installing packages.
+To adopt existing files (then restore from git):
+```bash
+stow -t ~ --adopt zsh nvim kitty lazygit tmux
+git checkout .
+```
+
+## Post-Installation
+
+The automatic installation covers almost everything except tmux plugins.
+To install tmux plugins, press `Ctrl+s I` inside tmux.
 
 ## Theme
 
@@ -96,10 +126,10 @@ amazing and beautiful theme that supports so much tools.
 [JetBrains Mono](https://www.jetbrains.com/lp/mono/) is used in this
 configuration, but it can be changed to the alternative
 [CaskaydiaCove Nerd Font Mono](https://github.com/eliheuer/caskaydia-cove?tab=readme-ov-file)
-or any other. Please note that in order for some of the termial tools to work
-propperly the code
+or any other. Please note that in order for some of the terminal tools to work
+properly you need a Nerd Font installed.
 
-## Tools and application configured
+## Tools and Applications Configured
 
 - [kitty](https://sw.kovidgoyal.net/kitty/) as a terminal application as it is
   minimalistic and supports graphics protocol to display images in the terminal.
@@ -110,7 +140,7 @@ propperly the code
   - [tmux-sensible](https://github.com/tmux-plugins/tmux-sensible) for
     additional options
   - [vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator) for
-    navigating between widows and splits in neovim and tmux.
+    navigating between windows and splits in neovim and tmux.
   - [tmux-which-key](https://github.com/alexwforsythe/tmux-which-key) for
     showing the tmux hotkeys configured.
   - [tmuxifier](https://github.com/jimeh/tmuxifier) to easily configure and use
@@ -129,15 +159,15 @@ propperly the code
     fzf menu
   - [zsh-256color](https://github.com/chrissicool/zsh-256color) for wider color
     support in zsh
-- [yabai](https://github.com/koekeishiya/yabai) tiling window manager. Configured
-  but not recommended to use, as it has strict security requirements, that
-  ususally are not allowed on the work machines.
+- [yabai](https://github.com/koekeishiya/yabai) tiling window manager (macOS only).
+  Configured but not recommended to use, as it has strict security requirements
+  that usually are not allowed on work machines.
 
 ## Troubleshooting
 
 - If you have a problem with icons overlapping or showing wrong in your ZSH
   prompt - try to delete the .p10k.zsh file, and reopen the terminal. You will
-  be greeted with p10k instialization wizard, after completing which you will
+  be greeted with p10k initialization wizard, after completing which you will
   get a new .p10k.zsh file
 - If you used the script to install the packages and dotfiles and something
   went wrong - your configuration files are located in the
@@ -145,17 +175,11 @@ propperly the code
   automatic script located in `./scripts/restore-backup.sh` and you need to
   provide the backup folder. Example of usage:
   ```bash
-  ./scripts/restore-backup.sh bakcup_20240522_213916
+  ./scripts/restore-backup.sh backup_20240522_213916
   ```
   This will replace all the files under `~/` that are the same relatively to
   the backup folder.
 
-## TODOs:
-
-- Tiling window manager for Mac OS (amethyst or swish or yabai)
-- Update config for Code-OSS on mac OS
-- Fix issue with neovim not starting propperly because of magick
-
-## Usefull tools
+## Useful Tools
 
 - `ncdu /` runs the disk scan for large files.

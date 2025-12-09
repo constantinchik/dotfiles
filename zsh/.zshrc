@@ -28,7 +28,6 @@ zinit light chrissicool/zsh-256color
 # Add plugins from oh-my-zsh
 zinit snippet OMZP::git
 zinit snippet OMZP::sudo
-zinit snippet OMZP::archlinux
 zinit snippet OMZP::command-not-found
 
 # Vim mode
@@ -96,40 +95,16 @@ export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
-# OS specific configuration
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    # Linux-specific configuration
-    
-    # Check for AUR helper
-    if pacman -Qi yay &>/dev/null ; then
-       aurhelper="yay"
-    elif pacman -Qi paru &>/dev/null ; then
-       aurhelper="paru"
-    fi
-    # AUR helper aliases
-    alias un='$aurhelper -Rns' # uninstall package
-    alias up='$aurhelper -Syu' # update system/package/aur
-    alias pl='$aurhelper -Qs' # list installed package
-    alias pa='$aurhelper -Ss' # list availabe package
-    alias pc='$aurhelper -Sc' # remove unused cache
-    alias po='$aurhelper -Qtdq | $aurhelper -Rns -' # remove unused packages, also try > $aurhelper -Qqd | $aurhelper -Rsu --print -
-
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-    # Mac-specific configuration
-    alias un='brew uninstall' # uninstall package
-    alias up='brew upgrade' # update system/package/aur
-    alias pl='brew list' # list installed package
-    alias pc='brew cleanup' # remove unused cache
-fi
-
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 
-
 # bun completions
-[ -s "/Users/cost/.bun/_bun" ] && source "/Users/cost/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
-# Import secrets
+# Source OS-specific configuration
+[[ -f ~/.zshrc.os ]] && source ~/.zshrc.os
+
+# Import secrets and local overrides
 for file in ~/.zshrc.{secrets,local}; do
     [[ -f "$file" ]] && source "$file"
 done
@@ -138,13 +113,13 @@ done
 check_env_vars() {
     local missing=()
     local vars=("GITHUB_PERSONAL_ACCESS_TOKEN")
-    
+
     for var in "${vars[@]}"; do
         [[ -z "${(P)var}" ]] && missing+=("$var")
     done
-    
+
     if [[ ${#missing[@]} -gt 0 ]]; then
-        echo "⚠️  Missing environment variables claude desktop might not work: ${missing[*]}"
+        echo "Warning: Missing environment variables claude desktop might not work: ${missing[*]}"
         echo "   Create ~/.zshrc.secrets from ~/.zshrc.secrets.template"
     fi
 }
