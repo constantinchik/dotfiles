@@ -156,12 +156,10 @@ if command -v hyprctl &>/dev/null && hyprctl version &>/dev/null; then
     hyprctl reload || echo "Warning: Could not reload Hyprland"
 fi
 
-# Restart waybar if running
+# Restart waybar using omarchy's script (handles uwsm properly)
 if pgrep -x waybar &>/dev/null; then
     echo "Restarting waybar..."
-    killall waybar 2>/dev/null || true
-    sleep 0.5
-    uwsm-app -- waybar &disown 2>/dev/null || waybar &disown 2>/dev/null || true
+    omarchy-restart-waybar
 fi
 
 # ╔══════════════════════════════════════════════════════════════════════╗
