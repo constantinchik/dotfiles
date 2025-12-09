@@ -1,0 +1,72 @@
+@import "../omarchy/current/theme/waybar.css";
+
+* {
+    all: unset;
+    background-image: none;
+    margin: unset;
+    padding: unset;
+    transition: 200ms cubic-bezier(0, 0, 1, 1);
+}
+
+window {
+    background-color: alpha(@background, 0.8);
+}
+
+button {
+    font-family: 'JetBrainsMono Nerd Font';
+    background-color: @cyan;
+    border-radius: 10px;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+#lock {
+    background-image: image(url("lock.png"));
+    margin: 5px 5px 5px 300px;
+    padding: 5px;
+}
+
+#shutdown {
+    background-image: image(url("power.png"));
+    margin: 5px 300px 5px 5px;
+    padding: 5px;
+}
+
+#logout {
+    background-image: image(url("logout.png"));
+    margin: 5px 300px 5px 5px;
+    padding: 5px;
+}
+
+#reboot {
+    background-image: image(url("restart.png"));
+    margin: 5px 5px 5px 300px;
+    padding: 5px;
+}
+
+#lock:focus {
+    margin: 5px 5px 5px 200px;
+}
+
+#shutdown:focus {
+    margin: 5px 200px 5px 5px;
+}
+
+#logout:focus {
+    margin: 5px 200px 5px 5px;
+}
+
+#reboot:focus {
+    margin: 5px 5px 5px 200px;
+}
+
+button:focus {
+    background-color: @blue;
+    color: @background;
+    background-position: center;
+}
+
+button:hover {
+    background-color: alpha(@cyan, 0.8);
+}
