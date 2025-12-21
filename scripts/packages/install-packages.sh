@@ -73,7 +73,6 @@ fi
 
 # Install nvm if not exists
 if ! command -v nvm &> /dev/null; then
-then
     echo "Installing nvm:"
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
     # TODO: Source nvm somehow

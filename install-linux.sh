@@ -6,7 +6,20 @@ set -e
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$SCRIPT_DIR"
 
+# Source common scripts
+source "$SCRIPT_DIR/scripts/common/colors.sh"
+source "$SCRIPT_DIR/scripts/common/arguments.sh"
+source "$SCRIPT_DIR/scripts/clean/nvim.sh"
+
+# Parse arguments
+parse_args "$@"
+
 echo "Installing Linux dotfiles..."
+
+# Clean if requested
+if [ "$CLEAN_RUN" = true ]; then
+    clean_nvim
+fi
 
 # Backup existing configs
 echo "Backing up existing configs..."
@@ -50,7 +63,7 @@ LINUX_PACKAGES=(
 for pkg in "${SHARED_PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
         echo "  Stowing $pkg..."
-        stow -t ~ --adopt "$pkg" 2>/dev/null || stow -t ~ "$pkg"
+        stow -t ~ -R --adopt --override='.*' "$pkg"
     fi
 done
 
@@ -58,7 +71,7 @@ done
 for pkg in "${LINUX_PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
         echo "  Stowing $pkg (Linux-specific)..."
-        stow -t ~ --adopt "$pkg" 2>/dev/null || stow -t ~ "$pkg"
+        stow -t ~ -R --adopt --override='.*' "$pkg"
     fi
 done
 
