@@ -69,8 +69,22 @@ zstyle ':completion:*' menu no # no menu selection, use fzf instead
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --icons=auto $realpath'
 
 # Shell integrations
-eval "$(fzf --zsh)" # C-r opens fzf history search
-eval "$(zoxide init --cmd cd zsh)"
+# FZF - fuzzy finder (Ctrl+R for history, Ctrl+T for files)
+if [ -f ~/.fzf.zsh ]; then
+    # Use git-installed fzf (newer version) - add to PATH first
+    export PATH="$HOME/.fzf/bin:$PATH"
+    source ~/.fzf.zsh
+elif command -v fzf &> /dev/null; then
+    # Try modern fzf --zsh flag (macOS Homebrew)
+    if fzf --help 2>/dev/null | grep -q -- '--zsh'; then
+        eval "$(fzf --zsh)"
+    fi
+fi
+
+# Zoxide - smart cd replacement
+if command -v zoxide &> /dev/null; then
+    eval "$(zoxide init --cmd cd zsh)"
+fi
 
 # --- setup fzf theme ---
 export FZF_DEFAULT_OPTS=" \
