@@ -25,7 +25,7 @@ their own packages.
 ```
 dotfiles/
 ├── zsh/              # Shared zsh config (.zshrc, .p10k.zsh)
-├── zsh-linux/        # Linux-specific zsh additions
+├── zsh-linux/        # Linux-specific zsh additions (Arch & Debian/Ubuntu)
 ├── zsh-macos/        # macOS-specific zsh additions
 ├── nvim/             # Neovim configuration (submodule)
 ├── kitty/            # Kitty terminal emulator
@@ -34,6 +34,7 @@ dotfiles/
 ├── vscode/           # VS Code settings
 ├── yabai/            # macOS-only (tiling wm)
 ├── scripts/          # Installation and utility scripts
+│   └── windows/      # Windows/WSL setup scripts
 ├── install.sh        # Main install script (auto-detects OS)
 ├── install-linux.sh  # Linux-specific installation
 └── install-macos.sh  # macOS-specific installation
@@ -81,6 +82,28 @@ The install script will:
 2. Install required packages
 3. Stow all relevant packages for your OS
 4. Set zsh as default shell
+
+### Windows/WSL (Home Server)
+
+For Windows machines running WSL2 (e.g., a home server), use the two-step setup:
+
+1. **Inside WSL**, run the Linux installation:
+   ```bash
+   ./install.sh
+   ```
+
+2. **In PowerShell (as Administrator)**, configure Windows Terminal and SSH:
+   ```powershell
+   cd /path/to/dotfiles/scripts/windows
+   .\setup-wsl.ps1
+   ```
+
+This configures:
+- JetBrainsMono Nerd Font installation
+- Windows Terminal with Rosé Pine theme
+- SSH port forwarding from Windows to WSL2 (for remote access)
+
+See [scripts/windows/README.md](scripts/windows/README.md) for detailed options and troubleshooting.
 
 ### Manual Installation
 

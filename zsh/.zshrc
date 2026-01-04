@@ -79,11 +79,15 @@ elif command -v fzf &> /dev/null; then
     if fzf --help 2>/dev/null | grep -q -- '--zsh'; then
         eval "$(fzf --zsh)"
     fi
+else
+    echo "Warning: fzf not installed. Install with: brew install fzf (macOS) or apt install fzf (Debian/Ubuntu)"
 fi
 
 # Zoxide - smart cd replacement
 if command -v zoxide &> /dev/null; then
     eval "$(zoxide init --cmd cd zsh)"
+else
+    echo "Warning: zoxide not installed. Install with: brew install zoxide (macOS) or apt install zoxide (Debian/Ubuntu)"
 fi
 
 # --- setup fzf theme ---
