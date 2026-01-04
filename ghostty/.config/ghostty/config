@@ -1,0 +1,23 @@
+# Ghostty Configuration
+
+# Theme - Rose Pine (built-in)
+theme = rose-pine-moon
+
+# Font Configuration
+font-family = JetBrainsMono Nerd Font
+font-size = 12
+
+# Cursor
+cursor-style = block
+cursor-style-blink = true
+
+# Window Padding
+window-padding-x = 0
+window-padding-y = 0
+
+# Background Settings
+background-opacity = 0.9
+background-blur-radius = 64
+
+# Remove confirmation before quitting
+confirm-close-surface = false
