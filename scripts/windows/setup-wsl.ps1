@@ -12,7 +12,7 @@ Write-Host ""
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Step 1: Install Nerd Font
-Write-Host "[1/2] Installing JetBrainsMono Nerd Font..." -ForegroundColor Yellow
+Write-Host "[1/3] Installing JetBrainsMono Nerd Font..." -ForegroundColor Yellow
 & "$scriptDir\install-font.ps1"
 
 Write-Host ""
@@ -21,8 +21,17 @@ $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 
 # Step 2: Configure Windows Terminal
 Write-Host ""
-Write-Host "[2/2] Configuring Windows Terminal..." -ForegroundColor Yellow
+Write-Host "[2/3] Configuring Windows Terminal..." -ForegroundColor Yellow
 & "$scriptDir\configure-terminal.ps1"
+
+Write-Host ""
+Write-Host "Press any key to continue to SSH configuration..."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+
+# Step 3: Configure SSH port forwarding
+Write-Host ""
+Write-Host "[3/3] Configuring SSH port forwarding..." -ForegroundColor Yellow
+& "$scriptDir\setup-ssh.ps1" -SetupScheduledTask
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
@@ -32,10 +41,12 @@ Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "1. Restart Windows Terminal" -ForegroundColor White
 Write-Host "2. Open a new WSL/Ubuntu tab" -ForegroundColor White
-Write-Host "3. Enjoy your configured terminal with:" -ForegroundColor White
+Write-Host "3. Enable SSH in WSL: sudo systemctl enable ssh --now" -ForegroundColor White
+Write-Host "4. Enjoy your configured terminal with:" -ForegroundColor White
 Write-Host "   - Rosé Pine color theme" -ForegroundColor Gray
 Write-Host "   - JetBrainsMono Nerd Font" -ForegroundColor Gray
 Write-Host "   - ZSH with autosuggestions" -ForegroundColor Gray
 Write-Host "   - Ctrl+Y to accept suggestions" -ForegroundColor Gray
 Write-Host "   - Ctrl+R for fuzzy history search" -ForegroundColor Gray
+Write-Host "   - SSH accessible via Windows IP" -ForegroundColor Gray
 Write-Host ""
