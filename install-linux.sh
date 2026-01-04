@@ -78,4 +78,17 @@ done
 # Restore any adopted files
 git checkout .
 
+# Enable SSH server (idempotent)
+if command -v systemctl &> /dev/null; then
+    if ! systemctl is-active --quiet ssh 2>/dev/null; then
+        echo "Enabling SSH server..."
+        sudo systemctl enable ssh --now 2>/dev/null || echo "Note: SSH setup requires sudo. Run: sudo systemctl enable ssh --now"
+    else
+        echo "SSH server already running"
+    fi
+fi
+
+# Setup SSH keys (optional, interactive)
+"$SCRIPT_DIR/scripts/setup-ssh-keys.sh"
+
 echo "Linux dotfiles installation complete!"

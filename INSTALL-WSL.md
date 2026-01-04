@@ -48,6 +48,8 @@ This will:
 - Install JetBrainsMono Nerd Font
 - Configure Windows Terminal with Rosé Pine theme
 - Set up proper font rendering
+- Configure SSH port forwarding from Windows to WSL2
+- Create a scheduled task to update port forwarding on startup (WSL2 IP changes on reboot)
 
 ### 3. Restart Windows Terminal
 
@@ -155,6 +157,48 @@ sudo apt-get install <package-name>
 - **Rosé Pine** color scheme in Windows Terminal
 - **JetBrainsMono Nerd Font** with icons
 - Consistent theming across all tools
+
+## SSH Access
+
+After installation, you can SSH into your WSL2 instance from other devices on your network:
+
+```bash
+ssh username@<windows-ip>
+```
+
+The setup automatically:
+1. Enables SSH server in WSL2
+2. Configures Windows port forwarding (port 22) to WSL2
+3. Adds a firewall rule to allow SSH traffic
+4. Creates a scheduled task to update forwarding on startup (since WSL2 IP changes)
+
+### Manual SSH Setup
+
+If you need to set up SSH separately:
+
+```powershell
+# From PowerShell (Administrator)
+cd C:\path\to\dotfiles\scripts\windows
+.\setup-ssh.ps1 -SetupScheduledTask
+```
+
+To remove SSH forwarding:
+```powershell
+.\setup-ssh.ps1 -RemoveScheduledTask
+```
+
+### Adding SSH Keys
+
+To allow key-based authentication, add your public key to `~/.ssh/authorized_keys` in WSL:
+
+```bash
+# On the remote machine, copy your public key
+cat ~/.ssh/id_ed25519.pub
+
+# In WSL, add it to authorized_keys
+echo "your-public-key-here" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
 
 ## Optional: Install Node.js
 
