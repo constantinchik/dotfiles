@@ -51,6 +51,29 @@ set_default_shell_to_brew_zsh
 # Install VS Code extensions
 "$SCRIPT_DIR/scripts/vscode/install-extensions.sh"
 
+# Clean up broken symlinks that would conflict with stow
+cleanup_broken_symlinks() {
+    local pkg="$1"
+    local pkg_dir="$SCRIPT_DIR/$pkg"
+
+    if [ ! -d "$pkg_dir" ]; then
+        return
+    fi
+
+    # Find all files/dirs in the package and check for broken symlinks at target
+    find "$pkg_dir" -mindepth 1 | while read -r src; do
+        # Get the relative path from package dir
+        local rel_path="${src#$pkg_dir/}"
+        local target="$HOME/$rel_path"
+
+        # Check if target is a broken symlink
+        if [ -L "$target" ] && [ ! -e "$target" ]; then
+            echo -e "  ${YELLOW}Removing broken symlink:${NC} $target"
+            rm "$target"
+        fi
+    done
+}
+
 echo "Stowing dotfiles packages..."
 
 # Shared packages (cross-platform)
@@ -69,11 +92,13 @@ MACOS_PACKAGES=(
     zsh-macos
     yabai
     claude
+    ghostty
 )
 
 # Stow shared packages
 for pkg in "${SHARED_PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
+        cleanup_broken_symlinks "$pkg"
         echo "  Stowing $pkg..."
         stow -t ~ -R --adopt --override='.*' "$pkg"
     fi
@@ -82,13 +107,21 @@ done
 # Stow macOS-specific packages
 for pkg in "${MACOS_PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
+        cleanup_broken_symlinks "$pkg"
         echo "  Stowing $pkg (macOS-specific)..."
         stow -t ~ -R --adopt --override='.*' "$pkg"
     fi
 done
 
-# Restore any adopted files
-git checkout .
+# Apply macOS settings
+if [ "$MACOS_SETTINGS" = true ]; then
+    echo "Applying macOS settings..."
+    "$SCRIPT_DIR/scripts/macos/set-macos-settings.sh"
+elif [ -z "$MACOS_SETTINGS" ]; then
+    if confirm_prompt "Apply macOS settings (dock, key repeat, trackpad)?"; then
+        "$SCRIPT_DIR/scripts/macos/set-macos-settings.sh"
+    fi
+fi
 
 # Configure SSH connection to home-server (WSL machine)
 configure_home_server_ssh() {

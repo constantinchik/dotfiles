@@ -1,8 +1,14 @@
 #!/bin/bash
 
-echo "Installing packages..."
 # Determine the directory where the script is located
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+COMMON_DIR="$SCRIPT_DIR/../common"
+
+# Source common scripts
+source "$COMMON_DIR/colors.sh"
+source "$COMMON_DIR/arguments.sh"
+
+echo "Installing packages..."
 
 # Function to install Linux packages
 install_linux_packages() {
@@ -76,10 +82,7 @@ if ! command -v nvm &> /dev/null; then
     echo "Installing nvm:"
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
     # TODO: Source nvm somehow
-    # Prompt for input
-    read -p "Do you want to setup NodeJS 22 via NVM? (y/N): " answer
-    answer=$(echo "$answer" | tr '[:lower:]' '[:upper:]')
-    if [[ "$answer" == "Y" || "$answer" == "YES" ]]; then
+    if confirm_prompt "Do you want to setup NodeJS 22 via NVM?"; then
         echo "Installing NodeJS 22 via NVM..."
         nvm install 22
         nvm alias default 22
@@ -89,7 +92,7 @@ if ! command -v nvm &> /dev/null; then
         echo "Skipped. NodeJS was not installed."
     fi
 else
-    echo "nvm already exists. Skipp installing"
+    echo "nvm already exists. Skipping installation."
 fi
 echo ""
 
@@ -110,14 +113,12 @@ git config --global diff-so-fancy.rulerWidth 80
 curl -sSL https://get.rvm.io | bash
 # TODO: Source rvm
 
-read -p "Do you want to install Ruby 3.3.1 via RVM? (y/N): " answer
-answer=$(echo "$answer" | tr '[:lower:]' '[:upper:]')
-if [[ "$answer" == "Y" || "$answer" == "YES" ]]; then
+if confirm_prompt "Do you want to install Ruby 3.3.1 via RVM?"; then
     echo "Installing Ruby 3.3.1 via RVM..."
     rvm install ruby-3.3.1
     rvm use 3.3.1 --default
 else
-    echo "Skipped. NodeJS 20 not installed."
+    echo "Skipped. Ruby 3.3.1 was not installed."
 fi
 
 echo "Installing zinit"

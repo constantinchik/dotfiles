@@ -1,27 +1,27 @@
 gui:
   theme:
     activeBorderColor:
-      - "#89b4fa"
+      - "#c4a7e7"  # iris
       - bold
     inactiveBorderColor:
-      - "#a6adc8"
+      - "#6e6a86"  # muted
     optionsTextColor:
-      - "#89b4fa"
+      - "#c4a7e7"  # iris
     selectedLineBgColor:
-      - "#313244"
+      - "#26233a"  # surface
     cherryPickedCommitBgColor:
-      - "#45475a"
+      - "#403d52"  # overlay
     cherryPickedCommitFgColor:
-      - "#89b4fa"
+      - "#c4a7e7"  # iris
     unstagedChangesColor:
-      - "#f38ba8"
+      - "#eb6f92"  # love
     defaultFgColor:
-      - "#cdd6f4"
+      - "#e0def4"  # text
     searchingActiveBorderColor:
-      - "#f9e2af"
+      - "#f6c177"  # gold
 
   authorColors:
-    "*": "#b4befe"
+    "*": "#ebbcba"  # rose
 
 git:
   paging:
