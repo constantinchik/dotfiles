@@ -27,23 +27,23 @@ if [[ "$DISTRO" == "arch" ]] || command -v pacman &> /dev/null; then
        aurhelper="paru"
     fi
 
-    # AUR helper aliases
-    alias un='$aurhelper -Rns' # uninstall package
-    alias up='$aurhelper -Syu' # update system/package/aur
-    alias pl='$aurhelper -Qs' # list installed package
-    alias pa='$aurhelper -Ss' # list availabe package
-    alias pc='$aurhelper -Sc' # remove unused cache
+    # AUR helper aliases (standardized: un/up/pl/pa/pc/po)
+    alias un='$aurhelper -Rns'                      # uninstall package
+    alias up='$aurhelper -Syu'                      # update system
+    alias pl='$aurhelper -Qs'                       # list installed packages
+    alias pa='$aurhelper -Ss'                       # list available packages
+    alias pc='$aurhelper -Sc'                       # remove unused cache
     alias po='$aurhelper -Qtdq | $aurhelper -Rns -' # remove unused packages
 fi
 
 # Ubuntu/Debian specific
 if [[ "$DISTRO" == "ubuntu" ]] || [[ "$DISTRO" == "debian" ]] || command -v apt-get &> /dev/null; then
-    # APT aliases
-    alias upd='sudo apt-get update' # update package database
-    alias upg='sudo apt-get upgrade' # upgrade packages
-    alias ins='sudo apt-get install' # install package
-    alias rem='sudo apt-get remove' # remove package
-    alias pur='sudo apt-get purge' # purge package and config
-    alias acs='apt-cache search' # search for packages
-    alias acsh='apt-cache show' # show package info
+    # APT aliases (standardized with Arch: un/up/pl/pa/pc/po)
+    alias un='sudo apt-get remove'                               # uninstall package
+    alias up='sudo apt-get update && sudo apt-get upgrade'       # update system
+    alias pl='dpkg --get-selections | grep -v deinstall'         # list installed packages
+    alias pa='apt-cache search'                                  # list available packages
+    alias pc='sudo apt-get clean && sudo apt-get autoclean'      # remove unused cache
+    alias po='sudo apt-get autoremove'                           # remove unused packages
+    alias ins='sudo apt-get install'                             # install package (apt-specific)
 fi
