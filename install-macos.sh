@@ -90,49 +90,70 @@ done
 # Restore any adopted files
 git checkout .
 
-# Check SSH connection to home-server (WSL machine)
-check_home_server_ssh() {
-    local SSH_CONFIG="$HOME/.ssh/config"
+# Configure SSH connection to home-server (WSL machine)
+configure_home_server_ssh() {
+    local SSH_DIR="$HOME/.ssh"
+    local SSH_CONFIG="$SSH_DIR/config"
+    local WSL_KEY="$SSH_DIR/id_wsl"
     local HOME_SERVER_HOST="192.168.2.100"
-    local HOME_SERVER_ALIAS="home"
+    local HOME_SERVER_ALIAS="wsl"
+    local HOME_SERVER_USER="const"
 
     echo ""
-    echo "Checking SSH connection to home-server..."
+    echo "Configuring SSH connection to home-server (WSL)..."
 
-    # Check if SSH config has home-server entry
-    if [[ -f "$SSH_CONFIG" ]] && grep -q "$HOME_SERVER_ALIAS\|$HOME_SERVER_HOST" "$SSH_CONFIG" 2>/dev/null; then
-        echo "✓ SSH config entry for home-server found"
+    # Ensure .ssh directory exists
+    mkdir -p "$SSH_DIR"
+    chmod 700 "$SSH_DIR"
 
-        # Test connection (with timeout)
-        if ssh -o ConnectTimeout=5 -o BatchMode=yes "$HOME_SERVER_ALIAS" exit 2>/dev/null || \
-           ssh -o ConnectTimeout=5 -o BatchMode=yes "$HOME_SERVER_HOST" exit 2>/dev/null; then
-            echo "✓ SSH connection to home-server works"
-            return 0
-        else
-            echo "⚠ SSH config exists but connection failed"
-            echo "  Ensure home-server is running and keys are configured"
+    # Check if private key exists
+    if [[ ! -f "$WSL_KEY" ]]; then
+        echo ""
+        echo "⚠ WSL private key not found at $WSL_KEY"
+        echo ""
+        echo "On your WSL machine, run: ./scripts/setup-ssh-keys.sh"
+        echo "Then copy the displayed private key content to $WSL_KEY"
+        echo ""
+        read -p "Have you copied the private key to $WSL_KEY? (y/n): " -n 1 -r
+        echo ""
+
+        if [[ ! $REPLY =~ ^[Yy]$ ]] || [[ ! -f "$WSL_KEY" ]]; then
+            echo "⚠ Skipping SSH configuration. Run this script again after copying the key."
+            return 1
         fi
-    else
-        echo "⚠ No SSH config entry for home-server"
     fi
 
+    # Set correct permissions on the key
+    chmod 600 "$WSL_KEY"
+    echo "✓ Private key found at $WSL_KEY"
+
+    # Check if SSH config already has WSL entry
+    if [[ -f "$SSH_CONFIG" ]] && grep -q "^Host $HOME_SERVER_ALIAS$" "$SSH_CONFIG" 2>/dev/null; then
+        echo "✓ SSH config entry for '$HOME_SERVER_ALIAS' already exists"
+    else
+        # Add SSH config entry
+        echo "" >> "$SSH_CONFIG"
+        echo "Host $HOME_SERVER_ALIAS" >> "$SSH_CONFIG"
+        echo "    HostName $HOME_SERVER_HOST" >> "$SSH_CONFIG"
+        echo "    User $HOME_SERVER_USER" >> "$SSH_CONFIG"
+        echo "    IdentityFile $WSL_KEY" >> "$SSH_CONFIG"
+        echo "✓ Added SSH config entry for '$HOME_SERVER_ALIAS'"
+    fi
+
+    # Test connection
     echo ""
-    echo "To configure SSH access to home-server (WSL machine):"
-    echo ""
-    echo "1. Generate an SSH key (if you don't have one):"
-    echo "   ssh-keygen -t ed25519 -C \"macbook\""
-    echo ""
-    echo "2. Add your public key to home-server's authorized_keys:"
-    echo "   ssh-copy-id const@$HOME_SERVER_HOST"
-    echo ""
-    echo "3. Add to ~/.ssh/config:"
-    echo "   Host $HOME_SERVER_ALIAS"
-    echo "       HostName $HOME_SERVER_HOST"
-    echo "       User const"
-    echo "       IdentityFile ~/.ssh/id_ed25519"
+    echo "Testing SSH connection to WSL..."
+    if ssh -o ConnectTimeout=5 -o BatchMode=yes "$HOME_SERVER_ALIAS" exit 2>/dev/null; then
+        echo "✓ SSH connection to WSL works!"
+        echo "  Connect with: ssh $HOME_SERVER_ALIAS"
+    else
+        echo "⚠ SSH connection test failed"
+        echo "  Ensure WSL machine is running and SSH server is started"
+        echo "  On WSL, run: sudo systemctl restart ssh"
+    fi
     echo ""
 }
 
-check_home_server_ssh
+configure_home_server_ssh
 
 echo "macOS dotfiles installation complete!"
