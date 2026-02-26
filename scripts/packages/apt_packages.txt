@@ -16,3 +16,4 @@ kitty
 unzip
 less
 diff-so-fancy
+yazi
