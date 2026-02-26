@@ -18,3 +18,4 @@ lazygit
 diff-so-fancy
 less
 zsh
+yazi

@@ -2,7 +2,7 @@
 
 This repository contains my dotfiles, so that it is easy to configure a new
 machine for my needs. The goal of this repository is to achieve single place
-of configuration for both macOS machines and Arch-Linux machines.
+of configuration for both macOS machines and Linux machines (Arch and Debian/Ubuntu).
 
 This repository is highly inspired by
 [Dreams of Autonomy](https://youtu.be/y6XCebnB9gs) and
@@ -10,7 +10,7 @@ This repository is highly inspired by
 
 Note that this repository has submodules for nvim configuration. In order for
 it to copy the nvim config you should clone this repo with
-`--recursive-submodules` flag.
+`--recurse-submodules` flag.
 
 ```bash
 git clone --recurse-submodules git@github.com:constantinchik/dotfiles.git
@@ -32,7 +32,11 @@ dotfiles/
 ├── lazygit/          # Lazygit configuration
 ├── tmux/             # Tmux configuration
 ├── vscode/           # VS Code settings
+├── yazi/             # Yazi file manager
+├── misc/             # Misc cross-platform configs
 ├── yabai/            # macOS-only (tiling wm)
+├── claude/           # macOS-only (Claude app config)
+├── ghostty/          # macOS-only (Ghostty terminal)
 ├── scripts/          # Installation and utility scripts
 │   └── windows/      # Windows/WSL setup scripts
 ├── install.sh        # Main install script (auto-detects OS)
@@ -49,6 +53,8 @@ dotfiles/
 - `lazygit` - Git TUI
 - `tmux` - Terminal multiplexer
 - `vscode` - VS Code settings
+- `yazi` - Terminal file manager
+- `misc` - Misc cross-platform configs
 
 **Linux-specific:**
 - `zsh-linux` - Arch Linux aliases and AUR helper config
@@ -56,6 +62,8 @@ dotfiles/
 **macOS-specific:**
 - `zsh-macos` - Homebrew aliases
 - `yabai` - Tiling window manager
+- `claude` - Claude app config
+- `ghostty` - Ghostty terminal config
 
 ## Installation
 
@@ -117,12 +125,12 @@ See [scripts/windows/README.md](scripts/windows/README.md) for detailed options 
 
 On Linux:
 ```bash
-stow zsh zsh-linux nvim kitty lazygit tmux vscode
+stow zsh zsh-linux nvim kitty lazygit tmux vscode yazi misc
 ```
 
 On macOS:
 ```bash
-stow zsh zsh-macos nvim kitty lazygit tmux vscode yabai
+stow zsh zsh-macos nvim kitty lazygit tmux vscode yazi misc yabai claude ghostty
 ```
 
 #### Using --adopt

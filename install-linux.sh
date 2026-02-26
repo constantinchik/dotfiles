@@ -52,6 +52,7 @@ SHARED_PACKAGES=(
     tmux
     vscode
     misc
+    yazi
 )
 
 # Linux-specific packages

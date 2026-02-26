@@ -85,6 +85,7 @@ SHARED_PACKAGES=(
     tmux
     vscode
     misc
+    yazi
 )
 
 # macOS-specific packages
