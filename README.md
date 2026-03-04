@@ -174,8 +174,10 @@ properly you need a Nerd Font installed.
     navigating between windows and splits in neovim and tmux.
   - [tmux-which-key](https://github.com/alexwforsythe/tmux-which-key) for
     showing the tmux hotkeys configured.
-  - [tmuxifier](https://github.com/jimeh/tmuxifier) to easily configure and use
-    tmux session/window presets.
+  - [tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect) to
+    save and restore tmux sessions (layouts, working directories, programs).
+  - [tmux-continuum](https://github.com/tmux-plugins/tmux-continuum) for
+    automatic session saving and restore on tmux start.
 - [zsh](https://www.zsh.org/) as a primary shell. Note that `ls` command is
   replaced in this configuration with `eza` and `cd` with zoxide's `z` command
   - [p10k](https://github.com/romkatv/powerlevel10k) as a theme for zsh inputs
@@ -193,6 +195,28 @@ properly you need a Nerd Font installed.
 - [yabai](https://github.com/koekeishiya/yabai) tiling window manager (macOS only).
   Configured but not recommended to use, as it has strict security requirements
   that usually are not allowed on work machines.
+
+## Tmux Hotkeys
+
+Prefix key is `Ctrl+s`.
+
+| Keybinding | Description |
+|---|---|
+| `prefix r` | Reload tmux config |
+| `prefix "` | Split pane vertically (in current directory) |
+| `prefix %` | Split pane horizontally (in current directory) |
+| `prefix ,` | Rename current window |
+| `Alt+h` | Previous window |
+| `Alt+l` | Next window |
+| `Ctrl+h/j/k/l` | Navigate between panes (works with neovim) |
+| `prefix Ctrl+h/j/k/l` | Resize pane |
+| `prefix [` | Enter copy mode (vim keys) |
+| `v` (copy mode) | Begin selection |
+| `y` (copy mode) | Copy selection |
+| `Ctrl+v` (copy mode) | Toggle rectangle selection |
+| `prefix Ctrl+s` | Save session (resurrect) |
+| `prefix Ctrl+r` | Restore session (resurrect) |
+| `prefix I` | Install TPM plugins |
 
 ## Troubleshooting
 
