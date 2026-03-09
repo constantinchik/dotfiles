@@ -1,0 +1,151 @@
+#!/bin/bash
+# homestream — Stream macOS screen to OBS via SRT
+# Runs in foreground. Use Ctrl+C to stop. Retries until OBS is listening.
+
+HOST="${HOME_SERVER:-192.168.2.100}"
+PORT="9000"
+VERBOSE=0
+SOURCE=""
+
+usage() {
+    echo "Usage: homestream [-v|--verbose] [-s|--source <index>]"
+    echo ""
+    echo "Streams screen to OBS via SRT. Retries on failure. Ctrl+C to stop."
+    echo ""
+    echo "Options:"
+    echo "  -s, --source <index>  Video source device index (prompted if omitted)"
+    echo "  -v, --verbose         Show ffmpeg output"
+}
+
+_pick_source() {
+    local raw
+    raw=$(ffmpeg -f avfoundation -list_devices true -i "" 2>&1)
+
+    # Extract only lines between "video devices:" and "audio devices:"
+    local devices
+    devices=$(echo "$raw" | sed -n '/AVFoundation video devices:/,/AVFoundation audio devices:/p' | grep -oE '\[[0-9]+\] .*')
+
+    if [[ -z "$devices" ]]; then
+        echo "homestream: no video devices found" >&2
+        return 1
+    fi
+
+    echo "Available video sources:"
+    local indices=()
+    while IFS= read -r line; do
+        local idx name
+        idx=$(echo "$line" | sed -E 's/\[([0-9]+)\].*/\1/')
+        name=$(echo "$line" | sed -E 's/\[[0-9]+\] (.*)/\1/')
+        indices+=("$idx")
+        echo "  $idx) $name"
+    done <<< "$devices"
+
+    printf "Select source [%s]: " "${indices[0]}"
+    read -r choice
+    choice="${choice:-${indices[0]}}"
+
+    # Validate choice
+    for idx in "${indices[@]}"; do
+        if [[ "$choice" == "$idx" ]]; then
+            SOURCE="$choice"
+            return 0
+        fi
+    done
+
+    echo "homestream: invalid source '$choice'" >&2
+    return 1
+}
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -v|--verbose) VERBOSE=1 ;;
+        -s|--source) SOURCE="$2"; shift ;;
+        -h|--help) usage; exit 0 ;;
+        *) echo "homestream: unknown option '$1'"; usage; exit 1 ;;
+    esac
+    shift
+done
+
+# Prompt for source if not provided via flag
+if [[ -z "$SOURCE" ]]; then
+    _pick_source || exit 1
+fi
+
+_build_input_args() {
+    # Screen captures support 60fps and -capture_cursor; cameras typically max at 30fps
+    INPUT_ARGS=(-f avfoundation)
+    if ffmpeg -f avfoundation -list_devices true -i "" 2>&1 | sed -n '/AVFoundation video devices:/,/AVFoundation audio devices:/p' | grep "\[${SOURCE}\]" | grep -qi "capture screen"; then
+        INPUT_ARGS+=(-capture_cursor 1 -framerate 60)
+    else
+        INPUT_ARGS+=(-framerate 30)
+    fi
+    INPUT_ARGS+=(-i "${SOURCE}:none")
+}
+
+FFMPEG_PID=""
+
+_start_ffmpeg() {
+    _build_input_args
+    if [[ "$VERBOSE" -eq 1 ]]; then
+        ffmpeg "${INPUT_ARGS[@]}" \
+            -c:v h264_videotoolbox -b:v 30M -realtime 1 -g 60 \
+            -profile:v high -level 5.2 \
+            -f mpegts "srt://${HOST}:${PORT}?mode=caller&latency=100000" &
+    else
+        ffmpeg "${INPUT_ARGS[@]}" \
+            -c:v h264_videotoolbox -b:v 30M -realtime 1 -g 60 \
+            -profile:v high -level 5.2 \
+            -f mpegts "srt://${HOST}:${PORT}?mode=caller&latency=100000" \
+            >/dev/null 2>&1 &
+    fi
+    FFMPEG_PID=$!
+}
+
+_stop_ffmpeg() {
+    if [[ -n "$FFMPEG_PID" ]] && kill -0 "$FFMPEG_PID" 2>/dev/null; then
+        kill "$FFMPEG_PID" 2>/dev/null
+        wait "$FFMPEG_PID" 2>/dev/null
+    fi
+    FFMPEG_PID=""
+}
+
+_cleanup() {
+    _stop_ffmpeg
+    echo ""
+    echo "homestream: stopped"
+    exit 0
+}
+
+trap _cleanup INT TERM
+
+echo "homestream: streaming source $SOURCE to srt://${HOST}:${PORT}"
+echo "homestream: type 'switch' to change source, Ctrl+C to stop"
+
+_start_ffmpeg
+
+while true; do
+    # Check if ffmpeg is still running
+    if ! kill -0 "$FFMPEG_PID" 2>/dev/null; then
+        wait "$FFMPEG_PID" 2>/dev/null
+        exit_code=$?
+        if [[ $exit_code -eq 0 ]]; then
+            echo "homestream: stream ended cleanly"
+            break
+        fi
+        echo "homestream: connection failed, retrying in 3s..."
+        sleep 3
+        _start_ffmpeg
+        continue
+    fi
+
+    # Read user input with a short timeout so we can check ffmpeg status
+    if read -t 1 -r cmd; then
+        if [[ "$cmd" == "switch" ]]; then
+            _stop_ffmpeg
+            _pick_source || { _start_ffmpeg; continue; }
+            echo "homestream: switching to source $SOURCE"
+            _start_ffmpeg
+        fi
+    fi
+done
