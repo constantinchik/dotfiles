@@ -53,11 +53,13 @@ SHARED_PACKAGES=(
     vscode
     misc
     yazi
+    bin
 )
 
 # Linux-specific packages
 LINUX_PACKAGES=(
     zsh-linux
+    bin-linux
 )
 
 # Stow shared packages

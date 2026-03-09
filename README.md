@@ -24,6 +24,9 @@ their own packages.
 
 ```
 dotfiles/
+├── bin/              # Shared personal scripts (~/.local/bin)
+├── bin-linux/        # Linux-only personal scripts
+├── bin-macos/        # macOS-only personal scripts
 ├── zsh/              # Shared zsh config (.zshrc, .p10k.zsh)
 ├── zsh-linux/        # Linux-specific zsh additions (Arch & Debian/Ubuntu)
 ├── zsh-macos/        # macOS-specific zsh additions
@@ -47,6 +50,7 @@ dotfiles/
 ### Stow Packages
 
 **Shared (cross-platform):**
+- `bin` - Personal scripts (`~/.local/bin`)
 - `zsh` - Zsh shell configuration
 - `nvim` - Neovim editor
 - `kitty` - Terminal emulator
@@ -57,9 +61,11 @@ dotfiles/
 - `misc` - Misc cross-platform configs
 
 **Linux-specific:**
+- `bin-linux` - Linux-only personal scripts
 - `zsh-linux` - Arch Linux aliases and AUR helper config
 
 **macOS-specific:**
+- `bin-macos` - macOS-only personal scripts
 - `zsh-macos` - Homebrew aliases
 - `yabai` - Tiling window manager
 - `claude` - Claude app config
@@ -125,12 +131,12 @@ See [scripts/windows/README.md](scripts/windows/README.md) for detailed options 
 
 On Linux:
 ```bash
-stow zsh zsh-linux nvim kitty lazygit tmux vscode yazi misc
+stow zsh zsh-linux nvim kitty lazygit tmux vscode yazi misc bin bin-linux
 ```
 
 On macOS:
 ```bash
-stow zsh zsh-macos nvim kitty lazygit tmux vscode yazi misc yabai claude ghostty
+stow zsh zsh-macos nvim kitty lazygit tmux vscode yazi misc yabai claude ghostty bin bin-macos
 ```
 
 #### Using --adopt

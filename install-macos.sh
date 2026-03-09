@@ -86,6 +86,7 @@ SHARED_PACKAGES=(
     vscode
     misc
     yazi
+    bin
 )
 
 # macOS-specific packages
@@ -94,6 +95,7 @@ MACOS_PACKAGES=(
     yabai
     claude
     ghostty
+    bin-macos
 )
 
 # Stow shared packages
