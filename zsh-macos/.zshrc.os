@@ -1,5 +1,8 @@
 # macOS-specific zsh configuration
 
+# Home server
+export HOME_SERVER="192.168.2.100"
+
 # Homebrew aliases
 alias un='brew uninstall' # uninstall package
 alias up='brew upgrade' # update system/package
