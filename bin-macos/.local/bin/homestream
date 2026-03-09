@@ -72,41 +72,80 @@ if [[ -z "$SOURCE" ]]; then
     _pick_source || exit 1
 fi
 
-echo "homestream: streaming source $SOURCE to srt://${HOST}:${PORT}"
-echo "homestream: press Ctrl+C to stop"
+_build_input_args() {
+    # Screen captures support 60fps and -capture_cursor; cameras typically max at 30fps
+    INPUT_ARGS=(-f avfoundation)
+    if ffmpeg -f avfoundation -list_devices true -i "" 2>&1 | sed -n '/AVFoundation video devices:/,/AVFoundation audio devices:/p' | grep "\[${SOURCE}\]" | grep -qi "capture screen"; then
+        INPUT_ARGS+=(-capture_cursor 1 -framerate 60)
+    else
+        INPUT_ARGS+=(-framerate 30)
+    fi
+    INPUT_ARGS+=(-i "${SOURCE}:none")
+}
 
-trap 'echo ""; echo "homestream: stopped"; exit 0' INT TERM
+FFMPEG_PID=""
 
-# Build ffmpeg input args based on source type
-# Screen captures support 60fps and -capture_cursor; cameras typically max at 30fps
-INPUT_ARGS=(-f avfoundation)
-if ffmpeg -f avfoundation -list_devices true -i "" 2>&1 | sed -n '/AVFoundation video devices:/,/AVFoundation audio devices:/p' | grep "\[${SOURCE}\]" | grep -qi "capture screen"; then
-    INPUT_ARGS+=(-capture_cursor 1 -framerate 60)
-else
-    INPUT_ARGS+=(-framerate 30)
-fi
-INPUT_ARGS+=(-i "${SOURCE}:none")
-
-while true; do
+_start_ffmpeg() {
+    _build_input_args
     if [[ "$VERBOSE" -eq 1 ]]; then
         ffmpeg "${INPUT_ARGS[@]}" \
             -c:v h264_videotoolbox -b:v 30M -realtime 1 -g 60 \
             -profile:v high -level 5.2 \
-            -f mpegts "srt://${HOST}:${PORT}?mode=caller&latency=100000"
+            -f mpegts "srt://${HOST}:${PORT}?mode=caller&latency=100000" &
     else
         ffmpeg "${INPUT_ARGS[@]}" \
             -c:v h264_videotoolbox -b:v 30M -realtime 1 -g 60 \
             -profile:v high -level 5.2 \
             -f mpegts "srt://${HOST}:${PORT}?mode=caller&latency=100000" \
-            >/dev/null 2>&1
+            >/dev/null 2>&1 &
+    fi
+    FFMPEG_PID=$!
+}
+
+_stop_ffmpeg() {
+    if [[ -n "$FFMPEG_PID" ]] && kill -0 "$FFMPEG_PID" 2>/dev/null; then
+        kill "$FFMPEG_PID" 2>/dev/null
+        wait "$FFMPEG_PID" 2>/dev/null
+    fi
+    FFMPEG_PID=""
+}
+
+_cleanup() {
+    _stop_ffmpeg
+    echo ""
+    echo "homestream: stopped"
+    exit 0
+}
+
+trap _cleanup INT TERM
+
+echo "homestream: streaming source $SOURCE to srt://${HOST}:${PORT}"
+echo "homestream: type 'switch' to change source, Ctrl+C to stop"
+
+_start_ffmpeg
+
+while true; do
+    # Check if ffmpeg is still running
+    if ! kill -0 "$FFMPEG_PID" 2>/dev/null; then
+        wait "$FFMPEG_PID" 2>/dev/null
+        exit_code=$?
+        if [[ $exit_code -eq 0 ]]; then
+            echo "homestream: stream ended cleanly"
+            break
+        fi
+        echo "homestream: connection failed, retrying in 3s..."
+        sleep 3
+        _start_ffmpeg
+        continue
     fi
 
-    exit_code=$?
-    if [[ $exit_code -eq 0 ]]; then
-        echo "homestream: stream ended cleanly"
-        break
+    # Read user input with a short timeout so we can check ffmpeg status
+    if read -t 1 -r cmd; then
+        if [[ "$cmd" == "switch" ]]; then
+            _stop_ffmpeg
+            _pick_source || { _start_ffmpeg; continue; }
+            echo "homestream: switching to source $SOURCE"
+            _start_ffmpeg
+        fi
     fi
-
-    echo "homestream: connection failed, retrying in 3s..."
-    sleep 3
 done
