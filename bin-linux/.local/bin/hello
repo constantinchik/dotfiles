@@ -1,0 +1,12 @@
+#!/bin/bash
+# Personal hello script — Linux
+
+echo "Hello, $(whoami)!"
+echo ""
+echo "$(uname -o) $(uname -r) ($(uname -m))"
+echo "Host: $(hostname)"
+echo "Uptime: $(uptime -p | sed 's/^up //')"
+echo "Shell: $SHELL"
+echo "CPU: $(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs)"
+echo "Memory: $(free -h | awk '/Mem:/ {print $2}')"
+echo "Disk: $(df -h / | awk 'NR==2 {print $4 " free of " $2}')"

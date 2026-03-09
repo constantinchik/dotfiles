@@ -1,0 +1,12 @@
+#!/bin/bash
+# Personal hello script — macOS
+
+echo "Hello, $(whoami)!"
+echo ""
+echo "$(sw_vers -productName) $(sw_vers -productVersion) ($(uname -m))"
+echo "Host: $(scutil --get ComputerName)"
+echo "Uptime: $(uptime | sed 's/.*up //' | sed 's/,.*//')"
+echo "Shell: $SHELL"
+echo "CPU: $(sysctl -n machdep.cpu.brand_string)"
+echo "Memory: $(( $(sysctl -n hw.memsize) / 1073741824 )) GB"
+echo "Disk: $(df -h / | awk 'NR==2 {print $4 " free of " $2}')"
