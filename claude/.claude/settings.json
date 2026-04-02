@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(defaults:*)",
+      "mcp__obsidian__*",
+      "mcp__context7__query-docs",
+      "mcp__github__list_pull_requests",
+      "WebSearch"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  },
+  "model": "opus",
+  "alwaysThinkingEnabled": true,
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  }
+}
