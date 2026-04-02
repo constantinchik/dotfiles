@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Determine the directory where the script is located
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -8,18 +9,23 @@ COMMON_DIR="$SCRIPT_DIR/../common"
 source "$COMMON_DIR/colors.sh"
 source "$COMMON_DIR/arguments.sh"
 
+# Version pins — update these as needed
+NVM_VERSION="v0.39.7"
+NODE_VERSION="22"
+RUBY_VERSION="3.3.1"
+
 echo "Installing packages..."
 
 # Function to install Linux packages
 install_linux_packages() {
     if [ -x "$(command -v pacman)" ]; then
-      xargs -a "$SCRIPT_DIR/arch_pacman_packages.txt" sudo pacman -Syu
-      xargs -a "$SCRIPT_DIR/arch_yay_packages.txt" yay -Syu
+      xargs -a "$SCRIPT_DIR/arch_pacman_packages.txt" sudo pacman -S --needed --noconfirm
+      xargs -a "$SCRIPT_DIR/arch_yay_packages.txt" yay -S --needed --noconfirm
     elif [ -x "$(command -v apt-get)" ]; then
       sudo add-apt-repository ppa:aos1/diff-so-fancy
-      xargs -a "$SCRIPT_DIR/apt_packages.txt" sudo apt-get install
+      xargs -a "$SCRIPT_DIR/apt_packages.txt" sudo apt-get install -y
       # pyenv:
-      curl https://pyenv.run | bash
+      curl https://pyenv.run | bash || { echo "Failed to install pyenv"; exit 1; }
       # Lazy Git
       LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
       curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
@@ -80,12 +86,12 @@ fi
 # Install nvm if not exists
 if ! command -v nvm &> /dev/null; then
     echo "Installing nvm:"
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash || { echo "Failed to install nvm"; exit 1; }
     # TODO: Source nvm somehow
-    if confirm_prompt "Do you want to setup NodeJS 22 via NVM?"; then
-        echo "Installing NodeJS 22 via NVM..."
-        nvm install 22
-        nvm alias default 22
+    if confirm_prompt "Do you want to setup NodeJS ${NODE_VERSION} via NVM?"; then
+        echo "Installing NodeJS ${NODE_VERSION} via NVM..."
+        nvm install "$NODE_VERSION"
+        nvm alias default "$NODE_VERSION"
         # Enable pnpm
         corepack enable pnpm
     else
@@ -100,7 +106,7 @@ echo ""
 if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
     echo "TPM (Tmux Plugin Manager) is not installed. Installing now..."
     # Command to install TPM
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm || { echo "Failed to clone TPM"; exit 1; }
     echo "TPM installed successfully."
 fi
 
@@ -110,15 +116,15 @@ git config --global interactive.diffFilter "diff-so-fancy --patch"
 git config --global diff-so-fancy.rulerWidth 80
 
 # Install RVM (Ruby Version Manager)
-curl -sSL https://get.rvm.io | bash
+curl -sSL https://get.rvm.io | bash || { echo "Failed to install RVM"; exit 1; }
 # TODO: Source rvm
 
-if confirm_prompt "Do you want to install Ruby 3.3.1 via RVM?"; then
-    echo "Installing Ruby 3.3.1 via RVM..."
-    rvm install ruby-3.3.1
-    rvm use 3.3.1 --default
+if confirm_prompt "Do you want to install Ruby ${RUBY_VERSION} via RVM?"; then
+    echo "Installing Ruby ${RUBY_VERSION} via RVM..."
+    rvm install "ruby-${RUBY_VERSION}"
+    rvm use "$RUBY_VERSION" --default
 else
-    echo "Skipped. Ruby 3.3.1 was not installed."
+    echo "Skipped. Ruby ${RUBY_VERSION} was not installed."
 fi
 
 echo "Installing zinit"

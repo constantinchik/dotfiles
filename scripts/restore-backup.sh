@@ -21,7 +21,7 @@ if [ ! -d "$BACKUP_DIR" ]; then
 fi
 
 # Iterate over the files and folders in the backup folder
-for ITEM in $(find "*" "$BACKUP_DIR" ); do
+for ITEM in $(find "$BACKUP_DIR" -mindepth 1); do
     REL_PATH="${ITEM#$BACKUP_DIR/}"
     TARGET="$HOME/$REL_PATH"
 

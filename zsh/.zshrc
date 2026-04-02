@@ -140,7 +140,7 @@ check_env_vars() {
     done
 
     if [[ ${#missing[@]} -gt 0 ]]; then
-        echo "Warning: Missing environment variables claude desktop might not work: ${missing[*]}"
+        echo "Warning: Missing env vars (${missing[*]}). Claude Desktop may not work."
         echo "   Create ~/.zshrc.secrets from ~/.zshrc.secrets.template"
     fi
 }
