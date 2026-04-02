@@ -7,131 +7,92 @@ description: Log conversation results to Obsidian - decisions, learnings, and da
 
 You are wrapping up this Claude Code session. Your task is to intelligently capture valuable outcomes and log them to Obsidian with proper organization and linking.
 
-## Step 1: Analyze This Conversation
+## Step 1: Mine the Conversation
 
-Review our entire conversation and extract:
+Review our entire conversation and extract **every** item that could be valuable in the vault:
 
-### Key Decisions Made
-- What choices were made and why
-- Trade-offs considered
-- Final approach selected
+### Standard Extractions
+- **Decisions made** and why
+- **Problems solved** and how
+- **New learnings** or techniques
 
-### Problems Solved / Solutions Implemented
-- What issues were addressed
-- How they were resolved
-- Code changes or configurations made (files, functions, etc.)
+### Vault-Worthy Content (check for ALL of these)
+- **Guides/tutorials** discussed, created, or explained
+- **Hardware/device** configurations, specs, or troubleshooting
+- **Software/tool** setups, configs, or discoveries
+- **Ideas** mentioned in passing (even if not the main topic)
+- **Recipes, resources, research** shared or discovered
+- **Project documentation** created or significantly changed
+- **Inventory items** — new hardware, gear, or software mentioned
 
-### New Learnings or Techniques
-- Concepts discovered or clarified
-- Tools or methods learned
-- Best practices identified
-
-### Topics & Keywords (for categorization)
-- Technologies discussed (e.g., typescript, neovim, macos, docker)
-- Domains covered (e.g., dotfiles, audio-setup, productivity)
+### Topics & Keywords
+- Technologies discussed
+- Domains covered
 - Project names if applicable
-
-**Present this analysis to me in a structured format before proceeding.**
 
 ## Step 2: Search for Related Notes
 
-Using the extracted topics and keywords, search Obsidian for potentially related existing notes.
+Using the extracted topics, search Obsidian for related existing notes.
 
-Use `mcp__obsidian__obsidian_simple_search` with key topic terms to find related notes.
+Search priority based on topic:
+- **Code/Config work** → `3. Resources/Software/` or `3. Resources/Guides/`
+- **Learning/Research** → `3. Resources/Learning/` or `3. Resources/Research/`
+- **Device/Setup** → `3. Resources/Hardware/`
+- **Ideas/Concepts** → `3. Resources/Ideas/`
+- **Project work** → `1. Projects/`
+- **Workflow/Process** → `2. Areas/` or `3. Resources/`
 
-Search priority based on conversation topic:
-- **Code/Config work** -> `3. Resources/Tools/` or `1. Projects/`
-- **Learning/Research** -> `3. Resources/Learning/` or `3. Resources/Research/`
-- **Device/Setup** -> `3. Resources/Devices/`
-- **Workflow/Process** -> `2. Areas/` or `3. Resources/`
-- **Ideas/Concepts** -> `3. Resources/Ideas/`
+## Step 3: Present Items One by One
 
-## Step 3: Present Options to User
+Use `AskUserQuestion` to present **each vault-worthy item individually**:
 
-Use `AskUserQuestion` to present options and get confirmation:
+For each item show:
+1. **What**: Brief description of the content
+2. **Action**: Create new note OR update existing note (name which one)
+3. **Path**: Proposed vault location
+4. **Title**: Proposed note title
+5. **Tags**: Proposed tags
 
-### Show the user:
+Options per item: **Save** / **Skip** / **Modify** (let user change path/title)
 
-1. **Existing Notes That May Need Updates**
-   List any related notes found with reasons for potential updates.
-
-2. **Suggested New Note** (if applicable)
-   - Proposed Title
-   - Proposed Location (following PARA structure):
-     - `1. Projects/` - active work with deadlines
-     - `2. Areas/` - ongoing responsibilities
-     - `3. Resources/Tools/` - software/config documentation
-     - `3. Resources/Learning/` - concepts and techniques
-     - `3. Resources/Research/` - investigation findings
-     - `3. Resources/Devices/` - hardware-related
-     - `3. Resources/Ideas/` - future possibilities
-   - Proposed Tags
-   - Related Notes to link
-
-3. **Daily Note Summary Preview**
-   What will be appended to today's daily note.
-
-**Wait for user confirmation before proceeding.**
+After all items are presented, also offer a **Daily Note summary** entry.
 
 ## Step 4: Create/Update Notes
 
-After user confirms:
+After user confirms each item:
+
+### Vault Rules (always follow)
+
+- **Frontmatter required** on every note:
+  ```yaml
+  ---
+  tags:
+    - relevant-tags
+  type: resource | idea | project
+  status: active | planning | ideation | completed | archived
+  related: "[[Note 1]], [[Note 2]]"
+  created: YYYY-MM-DD
+  source: claude-session
+  ---
+  ```
+- **Wiki links**: `[[Note Name]]` for all cross-references
+- **Tags**: lowercase, hyphenated
+- **Cross-reference**: always include `## Related` section with wiki links
+- **Folder indexes**: Resources subfolders use `.base` database views — do NOT create `index.md`
+- **Footer**: end with `---` then `*Created*` and `*Last Updated*` dates
 
 ### For New Notes
 
-Use this frontmatter format:
-```yaml
----
-tags:
-  - [relevant-tag-1]
-  - [relevant-tag-2]
-type: resource
-status: active
-related: [[Related Note 1]], [[Related Note 2]]
-created: YYYY-MM-DD
-source: claude-session
----
-```
-
-Structure the note with:
-```markdown
-## Overview
-Brief summary of what this note covers.
-
-## Key Points
-- Main point 1
-- Main point 2
-
-## Details
-Detailed content organized by topic...
-
-## Related
-- [[Related Note 1]] - connection reason
-- [[Related Note 2]] - connection reason
-
----
-**Last Updated**: YYYY-MM-DD
-```
-
-Use `mcp__obsidian__obsidian_put_content` to create the note.
+Use `mcp__obsidian__obsidian_put_content` to create the note with proper structure.
 
 ### For Existing Note Updates
 
-Use `mcp__obsidian__obsidian_patch_content` to append new information under the appropriate heading:
-- operation: "append"
-- target_type: "heading"
-- target: "## Related" or appropriate section
-
-Also update the `**Last Updated**` date.
+Use `mcp__obsidian__obsidian_patch_content` to append new information under the appropriate heading. Also update the `*Last Updated*` date.
 
 ### For Daily Note
 
-1. Get today's daily note:
-   ```
-   mcp__obsidian__obsidian_get_periodic_note(period: "daily")
-   ```
-
-2. If exists, patch it to add/append a `## Claude Sessions` section:
+1. Get today's daily note: `mcp__obsidian__obsidian_get_periodic_note(period: "daily")`
+2. If exists, patch to add/append a `## Claude Sessions` section:
    ```markdown
    ### Session: HH:MM - [Brief Topic]
    **Context:** What we were working on
@@ -140,16 +101,7 @@ Also update the `**Last Updated**` date.
    - Key outcome 2
    **Notes Created/Updated:** [[Note 1]], [[Note 2]]
    ```
-
-3. If no daily note exists, create one at `Daily/YYYY-MM-DD.md` with proper frontmatter:
-   ```yaml
-   ---
-   date: YYYY-MM-DD
-   tags:
-     - daily-note
-   ---
-   ```
-   Then add the Claude Sessions section.
+3. If no daily note exists, read `Templates/Daily Note Template.md` from the vault, fill in the template variables (dates, aliases), and create the note at `Daily/YYYY-MM-DD.md`. Then append the Claude Sessions section.
 
 ## Step 5: Confirm Completion
 
@@ -157,37 +109,39 @@ Summarize all operations performed:
 - Notes created (with vault paths)
 - Notes updated (with what changed)
 - Daily note entry added
-- Wiki links established between notes
+- Wiki links established
 
 ## Important Guidelines
 
-- **Ask before acting** - Always present your plan and get confirmation
-- **Preserve existing content** - When updating notes, append rather than replace
-- **Use wiki links** - Connect related notes with `[[Note Name]]` syntax
-- **Match existing style** - Follow formatting patterns already in the vault
-- **Be concise in daily notes** - Brief summary, not full documentation
-- **Date everything** - Include timestamps for traceability
+- **Ask per item** — present each vault-worthy item individually for confirmation
+- **Preserve existing content** — when updating notes, append rather than replace
+- **Use wiki links** — connect related notes with `[[Note Name]]` syntax
+- **Match existing style** — follow formatting patterns already in the vault
+- **Be concise in daily notes** — brief summary, not full documentation
+- **Date everything** — include timestamps for traceability
 - **Handle edge cases**:
   - If conversation was trivial, offer just a daily note entry
-  - If multiple topics, offer separate notes or combined
+  - If multiple topics, present each as a separate item
   - If proposed title exists, suggest updating or alternative title
   - Warn about any sensitive content before logging
 
-## Obsidian Vault Structure Reference
+## Vault Structure Reference
 
 ```
 1. Projects/     - Active projects with deadlines
 2. Areas/        - Ongoing responsibilities
 3. Resources/    - Reference materials
    ├── Cooking/
-   ├── Devices/
+   ├── Guides/       - How-tos, tutorials, strategies
+   ├── Hardware/     - Physical devices, gear, specs
    ├── Ideas/
    ├── Learning/
    ├── Note-Taking/
    ├── Quotes/
    ├── Research/
-   └── Tools/
+   └── Software/     - Apps, tools, configurations
 4. Archive/      - Completed/inactive items
-Daily/           - Daily notes (YYYY-MM-DD.md format)
+Daily/           - Daily notes (YYYY-MM-DD.md)
 Templates/       - Note templates
+_QuickNote/      - Inbox for rapid capture
 ```
