@@ -15,7 +15,6 @@ lazygit
 diff-so-fancy
 less
 luarocks
-stats
 ncdu
 oven-sh/bun/bun
 yazi
