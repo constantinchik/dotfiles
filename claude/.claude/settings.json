@@ -1,4 +1,12 @@
 {
+  "alwaysThinkingEnabled": true,
+  "attribution": {
+    "commit": ""
+  },
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  },
+  "model": "opus",
   "permissions": {
     "allow": [
       "Bash(find:*)",
@@ -11,10 +19,5 @@
     ],
     "deny": [],
     "defaultMode": "default"
-  },
-  "model": "opus",
-  "alwaysThinkingEnabled": true,
-  "enabledPlugins": {
-    "swift-lsp@claude-plugins-official": true
   }
 }
