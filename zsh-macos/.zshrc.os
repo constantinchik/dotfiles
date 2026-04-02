@@ -1,7 +1,7 @@
 # macOS-specific zsh configuration
 
 # Home server
-export HOME_SERVER="192.168.2.100"
+export HOME_SERVER="${HOME_SERVER:-192.168.2.100}"
 
 # Homebrew aliases
 alias un='brew uninstall' # uninstall package

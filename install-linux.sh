@@ -41,6 +41,26 @@ fi
 # Install VS Code extensions
 "$SCRIPT_DIR/scripts/vscode/install-extensions.sh"
 
+# Clean up broken symlinks that would conflict with stow
+cleanup_broken_symlinks() {
+    local pkg="$1"
+    local pkg_dir="$SCRIPT_DIR/$pkg"
+
+    if [ ! -d "$pkg_dir" ]; then
+        return
+    fi
+
+    find "$pkg_dir" -mindepth 1 | while read -r src; do
+        local rel_path="${src#$pkg_dir/}"
+        local target="$HOME/$rel_path"
+
+        if [ -L "$target" ] && [ ! -e "$target" ]; then
+            echo -e "  ${YELLOW}Removing broken symlink:${NC} $target"
+            rm "$target"
+        fi
+    done
+}
+
 echo "Stowing dotfiles packages..."
 
 # Shared packages (cross-platform)
@@ -65,6 +85,7 @@ LINUX_PACKAGES=(
 # Stow shared packages
 for pkg in "${SHARED_PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
+        cleanup_broken_symlinks "$pkg"
         echo "  Stowing $pkg..."
         stow -t ~ -R --adopt --override='.*' "$pkg"
     fi
@@ -73,6 +94,7 @@ done
 # Stow Linux-specific packages
 for pkg in "${LINUX_PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
+        cleanup_broken_symlinks "$pkg"
         echo "  Stowing $pkg (Linux-specific)..."
         stow -t ~ -R --adopt --override='.*' "$pkg"
     fi
