@@ -1,5 +1,4 @@
 font-jetbrains-mono-nerd-font
 font-hack-nerd-font
-kitty
 visual-studio-code
 docker
