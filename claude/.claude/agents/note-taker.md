@@ -99,6 +99,10 @@ When creating or updating a daily note:
 3. Create at `Daily/YYYY-MM-DD.md`
 4. For session summaries, append under `## Claude Sessions`
 
+## After Creating New Folders
+
+If you created a new folder that doesn't appear in the PARA Structure above, mention to the user that they should run `/sync-vault` to update this agent definition.
+
 ## Before Writing
 
 1. Use Glob to check if a note with a similar name already exists

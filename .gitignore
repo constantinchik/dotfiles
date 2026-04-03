@@ -2,3 +2,6 @@
 .DS_Store
 
 .zshrc.secrets
+
+# Ignore claude as it installs to the same location as our bin scripts
+bin-macos/.local/bin/claude
