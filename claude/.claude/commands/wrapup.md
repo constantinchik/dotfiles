@@ -28,3 +28,5 @@ After all items, also offer a **Daily Note** session summary.
 For each confirmed item, spawn the `note-taker` agent with clear instructions: what to write, the note type, proposed title, and the content. The agent knows all vault rules — do not repeat them here.
 
 For the daily note, tell the agent to read the Daily Note Template from the vault and create/append the session summary.
+
+If the note-taker created any new folders during this session, suggest running `/sync-vault` to update the agent definition.
