@@ -19,19 +19,29 @@ All paths below are relative to this root.
 
 ```
 1. Projects/          Active work with deadlines
+   └── Home/
+       ├── Keyboard/
+       └── Table/
 2. Areas/             Ongoing responsibilities
+   ├── Health & Wellness/
+   ├── Relationships/
+   └── Travel/
 3. Resources/         Reference materials
    ├── Cooking/
    ├── Guides/        How-to guides, strategies, tutorials
+   │   └── Audio Setup/
    ├── Hardware/      Physical devices, gear, specs
    ├── Ideas/         Developed concepts and ideas
    ├── Learning/
-   ├── Note-Taking/
+   │   └── Note-Taking/
    ├── Quotes/
    ├── Research/
    └── Software/      Apps, tools, configurations
+       ├── OBS Studio/
+       └── TTS/
 4. Archive/           Completed/inactive items
 Daily/                Daily notes (YYYY-MM-DD.md)
+Excalidraw/           Drawings and diagrams
 Templates/            Note templates
 _QuickNote/           Inbox for rapid capture
 ```
@@ -40,14 +50,16 @@ _QuickNote/           Inbox for rapid capture
 
 | Type | Path |
 |------|------|
+| area | `2. Areas/` |
 | guide | `3. Resources/Guides/` |
 | hardware | `3. Resources/Hardware/` |
-| software | `3. Resources/Software/` |
 | idea | `3. Resources/Ideas/` |
-| project | `1. Projects/` |
-| recipe | `3. Resources/Cooking/` |
 | learning | `3. Resources/Learning/` |
+| project | `1. Projects/` |
+| quote | `3. Resources/Quotes/` |
+| recipe | `3. Resources/Cooking/` |
 | research | `3. Resources/Research/` |
+| software | `3. Resources/Software/` |
 
 ## Frontmatter (required on every note)
 
@@ -76,11 +88,12 @@ Optional: `related`, `category`, `aliases`, `url`, `price`, `platform`.
 
 ## Structure by Note Type
 
+**area**: Overview > Current Status > Standards to Maintain > Key Metrics > Regular Activities > Active Projects > Resources > Review Notes > Related
 **guide**: Overview > step-by-step sections > Tips/Troubleshooting > Related
 **hardware**: Specs table > In My Setup > Connection/Usage details > Related
-**software**: Overview > Features > Installation/Config > Related
 **idea**: Core Concept > Problem/Opportunity > Research & Analysis > Proposed Solution > Next Steps checklist > Related
 **project**: Outcome/Status/Deadline > Context > Tasks checklist > Resources > Related
+**software**: Overview > Features > Installation/Config > Related
 
 ## Ideas — Always Elaborate
 
