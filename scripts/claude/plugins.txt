@@ -1,0 +1,2 @@
+skill-creator@claude-plugins-official
+swift-lsp@claude-plugins-official

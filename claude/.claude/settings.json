@@ -1,12 +1,7 @@
 {
-  "alwaysThinkingEnabled": true,
   "attribution": {
     "commit": ""
   },
-  "enabledPlugins": {
-    "swift-lsp@claude-plugins-official": true
-  },
-  "model": "opus",
   "permissions": {
     "allow": [
       "Bash(find:*)",
@@ -19,5 +14,11 @@
     ],
     "deny": [],
     "defaultMode": "default"
-  }
+  },
+  "model": "opus",
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true
+  },
+  "alwaysThinkingEnabled": true
 }
