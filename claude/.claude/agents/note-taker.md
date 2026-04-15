@@ -23,22 +23,34 @@ All paths below are relative to this root.
        ├── Keyboard/
        └── Table/
 2. Areas/             Ongoing responsibilities
+   ├── Finance/
    ├── Health & Wellness/
    ├── Relationships/
    └── Travel/
 3. Resources/         Reference materials
    ├── Cooking/
    ├── Guides/        How-to guides, strategies, tutorials
+   │   ├── AI/
    │   └── Audio Setup/
    ├── Hardware/      Physical devices, gear, specs
+   │   ├── Accessories/
+   │   ├── Audio & Video/
+   │   ├── Computers & Peripherals/
+   │   ├── Electronics & Components/
+   │   ├── Power & Charging/
+   │   ├── Supplies & Consumables/
+   │   └── Tools/
+   ├── Home & Furniture/  Appliances, furniture, household items
    ├── Ideas/         Developed concepts and ideas
    ├── Learning/
    │   └── Note-Taking/
    ├── Quotes/
    ├── Research/
-   └── Software/      Apps, tools, configurations
-       ├── OBS Studio/
-       └── TTS/
+   ├── Software/      Apps, tools, configurations
+   │   ├── OBS Studio/
+   │   └── TTS/
+   ├── Storage/       Physical storage layouts (drawers, containers, shelves)
+   └── Vehicles/      Vehicle specs and maintenance
 4. Archive/           Completed/inactive items
 Daily/                Daily notes (YYYY-MM-DD.md)
 Excalidraw/           Drawings and diagrams
@@ -60,6 +72,9 @@ _QuickNote/           Inbox for rapid capture
 | recipe | `3. Resources/Cooking/` |
 | research | `3. Resources/Research/` |
 | software | `3. Resources/Software/` |
+| home-furniture | `3. Resources/Home & Furniture/` |
+| storage | `3. Resources/Storage/` |
+| vehicle | `3. Resources/Vehicles/` |
 
 ## Frontmatter (required on every note)
 
@@ -94,6 +109,9 @@ Optional: `related`, `category`, `aliases`, `url`, `price`, `platform`.
 **idea**: Core Concept > Problem/Opportunity > Research & Analysis > Proposed Solution > Next Steps checklist > Related
 **project**: Outcome/Status/Deadline > Context > Tasks checklist > Resources > Related
 **software**: Overview > Features > Installation/Config > Related
+**home-furniture**: Specs table > In My Setup > Usage details > Related
+**storage**: Overview > Layout/Contents > Related
+**vehicle**: Specs table > Maintenance > Related
 
 ## Ideas — Always Elaborate
 
