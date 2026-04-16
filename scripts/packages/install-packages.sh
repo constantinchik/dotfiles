@@ -41,8 +41,12 @@ install_linux_packages() {
 
 # Function to install macOS packages
 install_mac_packages() {
-    # Check if Homebrew is already installed
-    if command -v brew &> /dev/null; then
+    # Check if Homebrew is already installed (check directly — brew may not be in PATH on a fresh machine)
+    if command -v brew &> /dev/null || [ -x /opt/homebrew/bin/brew ]; then
+        # Ensure brew is in PATH for subsequent commands
+        if ! command -v brew &> /dev/null; then
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        fi
         echo "Homebrew is already installed."
     else
         echo "Homebrew is not installed. Installing..."
@@ -87,7 +91,9 @@ fi
 if ! command -v nvm &> /dev/null; then
     echo "Installing nvm:"
     curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash || { echo "Failed to install nvm"; exit 1; }
-    # TODO: Source nvm somehow
+    # Source nvm so it's available in this session
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     if confirm_prompt "Do you want to setup NodeJS ${NODE_VERSION} via NVM?"; then
         echo "Installing NodeJS ${NODE_VERSION} via NVM..."
         nvm install "$NODE_VERSION"
@@ -117,7 +123,8 @@ git config --global diff-so-fancy.rulerWidth 80
 
 # Install RVM (Ruby Version Manager)
 curl -sSL https://get.rvm.io | bash || { echo "Failed to install RVM"; exit 1; }
-# TODO: Source rvm
+# Source rvm so it's available in this session
+[ -s "$HOME/.rvm/scripts/rvm" ] && \. "$HOME/.rvm/scripts/rvm"
 
 if confirm_prompt "Do you want to install Ruby ${RUBY_VERSION} via RVM?"; then
     echo "Installing Ruby ${RUBY_VERSION} via RVM..."

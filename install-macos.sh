@@ -29,6 +29,11 @@ echo "Backing up existing configs..."
 echo "Installing packages..."
 "$SCRIPT_DIR/scripts/packages/install-packages.sh"
 
+# Ensure brew is in PATH (install-packages.sh runs as a subprocess, so its PATH changes don't propagate)
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 # Set Homebrew's zsh as default shell
 set_default_shell_to_brew_zsh() {
     BREW_ZSH=$(brew --prefix)/bin/zsh
