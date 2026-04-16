@@ -158,14 +158,9 @@ configure_home_server_ssh() {
         echo ""
         echo "On your WSL machine, run: ./scripts/setup-ssh-keys.sh"
         echo "Then copy the displayed private key content to $WSL_KEY"
+        echo "Then re-run this script to complete SSH configuration."
         echo ""
-        read -p "Have you copied the private key to $WSL_KEY? (y/n): " -n 1 -r
-        echo ""
-
-        if [[ ! $REPLY =~ ^[Yy]$ ]] || [[ ! -f "$WSL_KEY" ]]; then
-            echo "⚠ Skipping SSH configuration. Run this script again after copying the key."
-            return 0
-        fi
+        return 0
     fi
 
     # Set correct permissions on the key

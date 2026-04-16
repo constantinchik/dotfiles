@@ -5,3 +5,17 @@
 
 # Ignore claude as it installs to the same location as our bin scripts
 bin-macos/.local/bin/claude
+
+# Claude Code runtime data (keep only agents, commands, settings, skills)
+claude/.claude/backups/
+claude/.claude/cache/
+claude/.claude/file-history/
+claude/.claude/history.jsonl
+claude/.claude/plans/
+claude/.claude/plugins/
+claude/.claude/projects/
+claude/.claude/session-env/
+claude/.claude/sessions/
+claude/.claude/shell-snapshots/
+claude/.claude/image-cache/
+claude/.claude/paste-cache/

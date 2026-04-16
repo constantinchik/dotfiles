@@ -12,6 +12,7 @@ source "$COMMON_DIR/arguments.sh"
 # Version pins — update these as needed
 NVM_VERSION="v0.39.7"
 NODE_VERSION="22"
+PYTHON_VERSION="3.12.7"
 RUBY_VERSION="3.3.1"
 
 echo "Installing packages..."
@@ -83,6 +84,15 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 else
     echo "Unsupported OS"
     exit 1
+fi
+
+# Setup Python via pyenv (needed for Mason to install black, isort, pylint, debugpy)
+if command -v pyenv &> /dev/null; then
+    eval "$(pyenv init -)"
+    echo "Installing Python ${PYTHON_VERSION} via pyenv..."
+    pyenv install --skip-existing "$PYTHON_VERSION"
+    pyenv global "$PYTHON_VERSION"
+    pip install --upgrade pip
 fi
 
 # Install other packages/tools required:
