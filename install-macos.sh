@@ -29,6 +29,11 @@ echo "Backing up existing configs..."
 echo "Installing packages..."
 "$SCRIPT_DIR/scripts/packages/install-packages.sh"
 
+# Ensure brew is in PATH (install-packages.sh runs as a subprocess, so its PATH changes don't propagate)
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 # Set Homebrew's zsh as default shell
 set_default_shell_to_brew_zsh() {
     BREW_ZSH=$(brew --prefix)/bin/zsh
@@ -116,6 +121,10 @@ for pkg in "${MACOS_PACKAGES[@]}"; do
     fi
 done
 
+# Restore repo files that --adopt may have overwritten with pre-existing configs
+echo "Restoring dotfiles to repo versions..."
+git -C "$SCRIPT_DIR" checkout .
+
 # Apply macOS settings
 if [ "$MACOS_SETTINGS" = true ]; then
     echo "Applying macOS settings..."
@@ -149,14 +158,9 @@ configure_home_server_ssh() {
         echo ""
         echo "On your WSL machine, run: ./scripts/setup-ssh-keys.sh"
         echo "Then copy the displayed private key content to $WSL_KEY"
+        echo "Then re-run this script to complete SSH configuration."
         echo ""
-        read -p "Have you copied the private key to $WSL_KEY? (y/n): " -n 1 -r
-        echo ""
-
-        if [[ ! $REPLY =~ ^[Yy]$ ]] || [[ ! -f "$WSL_KEY" ]]; then
-            echo "⚠ Skipping SSH configuration. Run this script again after copying the key."
-            return 1
-        fi
+        return 0
     fi
 
     # Set correct permissions on the key

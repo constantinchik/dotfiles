@@ -3,3 +3,4 @@ font-hack-nerd-font
 visual-studio-code
 docker
 claude-code
+ghostty

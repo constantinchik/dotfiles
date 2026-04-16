@@ -12,6 +12,7 @@ source "$COMMON_DIR/arguments.sh"
 # Version pins — update these as needed
 NVM_VERSION="v0.39.7"
 NODE_VERSION="22"
+PYTHON_VERSION="3.12.7"
 RUBY_VERSION="3.3.1"
 
 echo "Installing packages..."
@@ -41,8 +42,12 @@ install_linux_packages() {
 
 # Function to install macOS packages
 install_mac_packages() {
-    # Check if Homebrew is already installed
-    if command -v brew &> /dev/null; then
+    # Check if Homebrew is already installed (check directly — brew may not be in PATH on a fresh machine)
+    if command -v brew &> /dev/null || [ -x /opt/homebrew/bin/brew ]; then
+        # Ensure brew is in PATH for subsequent commands
+        if ! command -v brew &> /dev/null; then
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        fi
         echo "Homebrew is already installed."
     else
         echo "Homebrew is not installed. Installing..."
@@ -74,11 +79,21 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Detected macOS"
     install_mac_packages
     # Other hacks for MacOS
-    # install magick via luarocks
+    # install luarocks packages for nvim (image.nvim, luarocks.nvim)
     luarocks --lua-version=5.1 install magick
+    luarocks --lua-version=5.1 install dkjson
 else
     echo "Unsupported OS"
     exit 1
+fi
+
+# Setup Python via pyenv (needed for Mason to install black, isort, pylint, debugpy)
+if command -v pyenv &> /dev/null; then
+    eval "$(pyenv init -)"
+    echo "Installing Python ${PYTHON_VERSION} via pyenv..."
+    pyenv install --skip-existing "$PYTHON_VERSION"
+    pyenv global "$PYTHON_VERSION"
+    pip install --upgrade pip
 fi
 
 # Install other packages/tools required:
@@ -87,13 +102,17 @@ fi
 if ! command -v nvm &> /dev/null; then
     echo "Installing nvm:"
     curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_VERSION}/install.sh" | bash || { echo "Failed to install nvm"; exit 1; }
-    # TODO: Source nvm somehow
+    # Source nvm so it's available in this session
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     if confirm_prompt "Do you want to setup NodeJS ${NODE_VERSION} via NVM?"; then
         echo "Installing NodeJS ${NODE_VERSION} via NVM..."
         nvm install "$NODE_VERSION"
         nvm alias default "$NODE_VERSION"
         # Enable pnpm
         corepack enable pnpm
+        # Install tree-sitter CLI (needed by nvim-treesitter to compile parsers)
+        npm install -g tree-sitter-cli
     else
         echo "Skipped. NodeJS was not installed."
     fi
@@ -117,12 +136,17 @@ git config --global diff-so-fancy.rulerWidth 80
 
 # Install RVM (Ruby Version Manager)
 curl -sSL https://get.rvm.io | bash || { echo "Failed to install RVM"; exit 1; }
-# TODO: Source rvm
+# Source rvm so it's available in this session (disable nounset — rvm scripts use unbound variables)
+set +u
+[ -s "$HOME/.rvm/scripts/rvm" ] && \. "$HOME/.rvm/scripts/rvm"
+set -u
 
 if confirm_prompt "Do you want to install Ruby ${RUBY_VERSION} via RVM?"; then
     echo "Installing Ruby ${RUBY_VERSION} via RVM..."
+    set +u
     rvm install "ruby-${RUBY_VERSION}"
     rvm use "$RUBY_VERSION" --default
+    set -u
 else
     echo "Skipped. Ruby ${RUBY_VERSION} was not installed."
 fi
