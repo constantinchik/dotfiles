@@ -160,7 +160,7 @@ configure_home_server_ssh() {
 
         if [[ ! $REPLY =~ ^[Yy]$ ]] || [[ ! -f "$WSL_KEY" ]]; then
             echo "⚠ Skipping SSH configuration. Run this script again after copying the key."
-            return 1
+            return 0
         fi
     fi
 
