@@ -123,13 +123,17 @@ git config --global diff-so-fancy.rulerWidth 80
 
 # Install RVM (Ruby Version Manager)
 curl -sSL https://get.rvm.io | bash || { echo "Failed to install RVM"; exit 1; }
-# Source rvm so it's available in this session
+# Source rvm so it's available in this session (disable nounset — rvm scripts use unbound variables)
+set +u
 [ -s "$HOME/.rvm/scripts/rvm" ] && \. "$HOME/.rvm/scripts/rvm"
+set -u
 
 if confirm_prompt "Do you want to install Ruby ${RUBY_VERSION} via RVM?"; then
     echo "Installing Ruby ${RUBY_VERSION} via RVM..."
+    set +u
     rvm install "ruby-${RUBY_VERSION}"
     rvm use "$RUBY_VERSION" --default
+    set -u
 else
     echo "Skipped. Ruby ${RUBY_VERSION} was not installed."
 fi
