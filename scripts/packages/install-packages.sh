@@ -79,8 +79,9 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Detected macOS"
     install_mac_packages
     # Other hacks for MacOS
-    # install magick via luarocks
+    # install luarocks packages for nvim (image.nvim, luarocks.nvim)
     luarocks --lua-version=5.1 install magick
+    luarocks --lua-version=5.1 install dkjson
 else
     echo "Unsupported OS"
     exit 1
@@ -110,6 +111,8 @@ if ! command -v nvm &> /dev/null; then
         nvm alias default "$NODE_VERSION"
         # Enable pnpm
         corepack enable pnpm
+        # Install tree-sitter CLI (needed by nvim-treesitter to compile parsers)
+        npm install -g tree-sitter-cli
     else
         echo "Skipped. NodeJS was not installed."
     fi
