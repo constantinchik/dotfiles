@@ -12,7 +12,6 @@ defaults -currentHost write com.apple.windowserver DisplayResolutionForSpaces -d
 # Disable Key Hold
 defaults -currentHost write -g ApplePressAndHoldEnabled -bool false
 defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool false
-defaults delete -g ApplePressAndHoldEnabled
 
 # Set key repeat. For bluetooth keyboards (glove80 in particular) do not set to 10/2 as it may cause lags.
 defaults write -g InitialKeyRepeat -int 50
@@ -20,8 +19,14 @@ defaults write -g KeyRepeat -int 1
 
 
 # Privacy: don't send Safari search queries to Apple
-defaults write com.apple.Safari UniversalSearchEnabled -bool false
-defaults write com.apple.Safari SuppressSearchSuggestions -bool true
+SAFARI_PLIST="$HOME/Library/Containers/com.apple.Safari/Data/Library/Preferences/com.apple.Safari"
+if [ -d "$HOME/Library/Containers/com.apple.Safari" ]; then
+    defaults write "$SAFARI_PLIST" UniversalSearchEnabled -bool false
+    defaults write "$SAFARI_PLIST" SuppressSearchSuggestions -bool true
+else
+    defaults write com.apple.Safari UniversalSearchEnabled -bool false
+    defaults write com.apple.Safari SuppressSearchSuggestions -bool true
+fi
 
 ###############################################################################
 # Dock, Dashboard, and hot corners                                            #
@@ -100,5 +105,5 @@ defaults write NSGlobalDomain "com.apple.mouse.linear" -bool true
 defaults write com.apple.WindowManager GloballyEnabled -bool false
 
 # Restart affected applications
-pkill "Dock"
-pkill "Finder"
+killall Dock 2>/dev/null || true
+killall Finder 2>/dev/null || true
