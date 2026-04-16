@@ -121,6 +121,10 @@ for pkg in "${MACOS_PACKAGES[@]}"; do
     fi
 done
 
+# Restore repo files that --adopt may have overwritten with pre-existing configs
+echo "Restoring dotfiles to repo versions..."
+git -C "$SCRIPT_DIR" checkout .
+
 # Apply macOS settings
 if [ "$MACOS_SETTINGS" = true ]; then
     echo "Applying macOS settings..."
