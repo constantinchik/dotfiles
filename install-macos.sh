@@ -56,6 +56,9 @@ set_default_shell_to_brew_zsh
 # Install VS Code extensions
 "$SCRIPT_DIR/scripts/vscode/install-extensions.sh"
 
+# Install Claude Code plugins
+"$SCRIPT_DIR/scripts/claude/install-plugins.sh"
+
 # Clean up broken symlinks that would conflict with stow
 cleanup_broken_symlinks() {
     local pkg="$1"
