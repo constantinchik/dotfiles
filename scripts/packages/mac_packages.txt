@@ -8,6 +8,7 @@ pyenv
 ripgrep
 tmux
 tree-sitter
+uv
 zsh
 stow
 unzip

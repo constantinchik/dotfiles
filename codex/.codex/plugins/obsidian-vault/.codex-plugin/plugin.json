@@ -1,0 +1,34 @@
+{
+  "name": "obsidian-vault",
+  "version": "0.1.0",
+  "description": "Codex workflows for saving, syncing, and organizing notes in the personal Obsidian vault.",
+  "author": {
+    "name": "Constantine Chykerenda"
+  },
+  "license": "MIT",
+  "keywords": [
+    "obsidian",
+    "notes",
+    "vault",
+    "knowledge-base",
+    "wrapup"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Obsidian Vault",
+    "shortDescription": "Save and sync personal vault notes",
+    "longDescription": "Adds Codex commands, an agent, and a note-taking skill for working with the personal Obsidian vault through the local Obsidian MCP server.",
+    "developerName": "Constantine Chykerenda",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Wrap up this session into Obsidian",
+      "Save this as a note in my vault",
+      "Sync the vault routing rules"
+    ],
+    "screenshots": []
+  }
+}

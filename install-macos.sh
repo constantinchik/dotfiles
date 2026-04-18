@@ -92,6 +92,7 @@ SHARED_PACKAGES=(
     misc
     yazi
     bin
+    codex
 )
 
 # macOS-specific packages

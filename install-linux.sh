@@ -74,6 +74,7 @@ SHARED_PACKAGES=(
     misc
     yazi
     bin
+    codex
 )
 
 # Linux-specific packages
