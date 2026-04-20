@@ -8,10 +8,9 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 REPO_ROOT=$(cd "$SCRIPT_DIR/../.." && pwd)
 PLUGIN_SOURCE="$REPO_ROOT/codex/.codex/plugins/obsidian-vault"
 PLUGIN_CACHE="$HOME/.codex/plugins/cache/constantinchik-dotfiles/obsidian-vault/0.1.0"
-COMMAND_SOURCE="$REPO_ROOT/codex/.codex/commands"
 COMMAND_DEST="$HOME/.codex/commands"
-SKILL_SOURCE="$REPO_ROOT/codex/.codex/skills/obsidian-note-taker"
-SKILL_DEST="$HOME/.codex/skills/obsidian-note-taker"
+SKILL_SOURCE_ROOT="$REPO_ROOT/codex/.codex/skills"
+SKILL_DEST_ROOT="$HOME/.codex/skills"
 
 copy_tree_following_links() {
     local source_dir="$1"
@@ -78,20 +77,16 @@ if [ -d "$PLUGIN_SOURCE" ]; then
     echo "Materialized Codex plugin cache: $PLUGIN_CACHE"
 fi
 
-if [ -d "$COMMAND_SOURCE" ]; then
-    mkdir -p "$COMMAND_DEST"
-
-    for source_file in "$COMMAND_SOURCE"/*.md; do
-        [ -e "$source_file" ] || continue
-        dest_file="$COMMAND_DEST/$(basename "$source_file")"
-        rm -f "$dest_file"
-        cp -L "$source_file" "$dest_file"
-    done
-
-    echo "Materialized Codex commands: $COMMAND_DEST"
+if [ -d "$COMMAND_DEST" ]; then
+    rm -f "$COMMAND_DEST/wrapup.md" "$COMMAND_DEST/sync-vault.md"
+    echo "Removed unsupported Codex command files: $COMMAND_DEST"
 fi
 
-if [ -d "$SKILL_SOURCE" ]; then
-    copy_tree_following_links "$SKILL_SOURCE" "$SKILL_DEST"
-    echo "Materialized Codex skill: $SKILL_DEST"
+if [ -d "$SKILL_SOURCE_ROOT" ]; then
+    for source_dir in "$SKILL_SOURCE_ROOT"/*; do
+        [ -d "$source_dir" ] || continue
+        skill_name=$(basename "$source_dir")
+        copy_tree_following_links "$source_dir" "$SKILL_DEST_ROOT/$skill_name"
+        echo "Materialized Codex skill: $SKILL_DEST_ROOT/$skill_name"
+    done
 fi

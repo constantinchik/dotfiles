@@ -17,7 +17,7 @@
   "interface": {
     "displayName": "Obsidian Vault",
     "shortDescription": "Save and sync personal vault notes",
-    "longDescription": "Adds Codex commands, an agent, and a note-taking skill for working with the personal Obsidian vault through the local Obsidian MCP server.",
+    "longDescription": "Adds Codex skills and an agent for working with the personal Obsidian vault through the local Obsidian MCP server.",
     "developerName": "Constantine Chykerenda",
     "category": "Productivity",
     "capabilities": [
