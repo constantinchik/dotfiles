@@ -129,6 +129,14 @@ if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
     echo "TPM installed successfully."
 fi
 
+# Sync tmux plugins to match tmux.conf (declarative, idempotent).
+# install_plugins clones any @plugin that's missing; clean_plugins removes any
+# on-disk plugin not declared in tmux.conf.
+if [[ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]]; then
+    "$HOME/.tmux/plugins/tpm/bin/install_plugins"
+    "$HOME/.tmux/plugins/tpm/bin/clean_plugins"
+fi
+
 # Install diff-so-fancy as a git pager
 git config --global core.pager "diff-so-fancy | less --tabs=4 -RF"
 git config --global interactive.diffFilter "diff-so-fancy --patch"
