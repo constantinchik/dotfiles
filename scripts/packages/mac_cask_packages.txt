@@ -1,6 +1,5 @@
 font-jetbrains-mono-nerd-font
 font-hack-nerd-font
 visual-studio-code
-docker
 claude-code
 ghostty
