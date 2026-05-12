@@ -94,6 +94,7 @@ SHARED_PACKAGES=(
     vscode
     misc
     yazi
+    opencode
     bin
 )
 
