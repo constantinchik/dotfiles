@@ -1,0 +1,32 @@
+#!/bin/sh
+
+text="$(cat)"
+
+url="$(
+    printf '%s' "$text" | perl -ne '
+        while (m{((?:https?://|file://|mailto:|www\.)\S+)}g) {
+            my $url = $1;
+            $url =~ s/[\)\]\}\>\.,;:!\?]+$//;
+            print $url;
+            exit 0;
+        }
+    ' 2>/dev/null
+)"
+
+if [ -z "$url" ]; then
+    tmux display-message "No URL found"
+    exit 1
+fi
+
+case "$url" in
+    http://*|https://*|file://*|mailto:*)
+        open "$url"
+        ;;
+    www.*)
+        open "https://$url"
+        ;;
+    *)
+        tmux display-message "No URL found"
+        exit 1
+        ;;
+esac

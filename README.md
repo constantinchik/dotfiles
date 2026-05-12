@@ -152,11 +152,36 @@ git checkout .
 The automatic installation covers almost everything except tmux plugins.
 To install tmux plugins, press `Ctrl+s I` inside tmux.
 
+## Tmux Highlights
+
+This tmux setup is tuned around fast keyboard navigation and a compact status
+line:
+
+- `Ctrl+s` is used as the tmux prefix instead of `Ctrl+b`
+- pane and window numbering starts at `1`
+- mouse support is enabled
+- window names are sticky and only change when renamed explicitly
+- active tabs use a Rosé Pine pink slanted index chip
+- panes running `ssh` or `mosh-client` get a remote indicator in the pane
+  border and next to the window number
+
+### Copy Mode
+
+Copy mode uses vi keys:
+
+- `prefix + [` enters copy mode
+- `v` starts a selection
+- `y` copies the selection
+- `Ctrl+v` toggles rectangle selection
+- `/` searches forward and `?` searches backward
+- `n` and `N` repeat the last search
+- `u` opens the first URL on the current line
+- `U` opens the first URL in the current selection
+
 ## Theme
 
-This config contains the theme files from
-[Catppuccin](https://github.com/catppuccin/catppuccin) Mocha as I find it an
-amazing and beautiful theme that supports so much tools.
+This config uses [Rosé Pine](https://rosepinetheme.com/) Moon across the
+terminal tooling where possible.
 
 ## Font
 
