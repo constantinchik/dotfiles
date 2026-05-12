@@ -36,6 +36,7 @@ dotfiles/
 ├── tmux/             # Tmux configuration
 ├── vscode/           # VS Code settings
 ├── yazi/             # Yazi file manager
+├── opencode/         # OpenCode agents, commands, skills, MCP config
 ├── misc/             # Misc cross-platform configs
 ├── yabai/            # macOS-only (tiling wm)
 ├── claude/           # macOS-only (Claude app config)
@@ -58,6 +59,7 @@ dotfiles/
 - `tmux` - Terminal multiplexer
 - `vscode` - VS Code settings
 - `yazi` - Terminal file manager
+- `opencode` - OpenCode agents, commands, skills, and MCP servers
 - `misc` - Misc cross-platform configs
 
 **Linux-specific:**
@@ -131,12 +133,12 @@ See [scripts/windows/README.md](scripts/windows/README.md) for detailed options 
 
 On Linux:
 ```bash
-stow zsh zsh-linux nvim kitty lazygit tmux vscode yazi misc bin bin-linux
+stow zsh zsh-linux nvim kitty lazygit tmux vscode yazi opencode misc bin bin-linux
 ```
 
 On macOS:
 ```bash
-stow zsh zsh-macos nvim kitty lazygit tmux vscode yazi misc yabai claude ghostty bin bin-macos
+stow zsh zsh-macos nvim kitty lazygit tmux vscode yazi opencode misc yabai claude ghostty bin bin-macos
 ```
 
 #### Using --adopt
