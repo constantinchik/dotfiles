@@ -144,7 +144,7 @@ configure_home_server_ssh() {
     local SSH_DIR="$HOME/.ssh"
     local SSH_CONFIG="$SSH_DIR/config"
     local WSL_KEY="$SSH_DIR/id_wsl"
-    local HOME_SERVER_HOST="${HOME_SERVER:-192.168.2.100}"
+    local HOME_SERVER_HOST="${HOME_SERVER:-192.168.30.10}"
     local HOME_SERVER_ALIAS="wsl"
     local HOME_SERVER_USER="${HOME_SERVER_USER:-const}"
 
