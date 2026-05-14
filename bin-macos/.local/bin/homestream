@@ -2,7 +2,7 @@
 # homestream — Stream macOS screen to OBS via SRT
 # Runs in foreground. Use Ctrl+C to stop. Retries until OBS is listening.
 
-HOST="${HOME_SERVER:-192.168.2.100}"
+HOST="${HOME_SERVER:-192.168.30.10}"
 PORT="9000"
 VERBOSE=0
 SOURCE=""

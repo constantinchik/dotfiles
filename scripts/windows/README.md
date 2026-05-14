@@ -12,6 +12,7 @@ cd /path/to/dotfiles/scripts/windows
 ```
 
 This will:
+
 1. Install JetBrainsMono Nerd Font
 2. Configure Windows Terminal with Rosé Pine theme
 3. Configure SSH port forwarding from Windows to WSL2
@@ -35,6 +36,7 @@ This downloads and installs the JetBrainsMono Nerd Font from the official Nerd F
 ```
 
 This updates your Windows Terminal settings with:
+
 - Rosé Pine color scheme
 - JetBrainsMono Nerd Font
 - Optimized cursor and opacity settings
@@ -69,6 +71,7 @@ powershell.exe -ExecutionPolicy Bypass -File setup-wsl.ps1
 ### Font Installation
 
 The JetBrainsMono Nerd Font includes:
+
 - All standard glyphs
 - Powerline symbols
 - Font Awesome icons
@@ -118,12 +121,12 @@ This configures SSH access to WSL2 from external devices via the Windows IP addr
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  External Device (e.g., phone on VPN)                           │
-│  ssh const@192.168.2.100                                        │
+│  ssh const@192.168.30.10                                        │
 └─────────────────────┬───────────────────────────────────────────┘
                       │ Port 22
                       ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│  Windows Host (192.168.2.100)                                   │
+│  Windows Host (192.168.30.10)                                   │
 │                                                                 │
 │  netsh portproxy: 0.0.0.0:22 ──────► 172.20.91.98:22           │
 │                                                                 │
@@ -135,7 +138,7 @@ This configures SSH access to WSL2 from external devices via the Windows IP addr
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-1. **External device** connects to Windows IP (192.168.2.100) on port 22
+1. **External device** connects to Windows IP (192.168.30.10) on port 22
 2. **Windows `netsh portproxy`** forwards the connection to WSL2's internal IP
 3. **WSL2's SSH server** handles the connection
 
@@ -150,6 +153,7 @@ netsh interface portproxy show v4tov4
 ```
 
 Expected output:
+
 ```
 Listen on ipv4:             Connect to ipv4:
 Address         Port        Address         Port
@@ -210,6 +214,7 @@ sudo systemctl status ssh
 ```
 
 This removes:
+
 - The port forwarding rule
 - The scheduled task
 
@@ -218,6 +223,7 @@ Note: It does not remove the firewall rule (harmless to leave).
 ## Color Palette Reference
 
 Rosé Pine colors used:
+
 - Background: `#191724`
 - Foreground: `#e0def4`
 - Cursor: `#524f67`
