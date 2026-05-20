@@ -45,6 +45,6 @@ git checkout .
 
 ## Obsidian Vault
 
-Vault path: `/Users/cost/Library/Mobile Documents/iCloud~md~obsidian/Documents/Personal notes`
+Vault path: `$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Personal notes`
 
 When conversation produces vault-worthy content — guides, hardware/software configs, ideas, project docs, research, recipes, or learning — mention it and offer `/wrapup`. To save a single item on the spot, spawn the `note-taker` agent directly. The agent has all vault rules baked in; do not duplicate them here.
