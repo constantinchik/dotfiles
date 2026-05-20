@@ -52,10 +52,7 @@
   "agent": {
     "note-taker": {
       "permission": {
-        "external_directory": {
-          "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Personal notes/**": "allow"
-        },
-        "bash": "deny"
+        "bash": "allow"
       }
     }
   }
