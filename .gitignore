@@ -19,3 +19,12 @@ claude/.claude/sessions/
 claude/.claude/shell-snapshots/
 claude/.claude/image-cache/
 claude/.claude/paste-cache/
+claude/.claude/.credentials.json
+claude/.claude/.last-cleanup
+claude/.claude/remote/
+claude/.claude/stats-cache.json
+claude/.claude/tasks/
+claude/.claude/telemetry/
+
+# Opencode server runtime data
+opencode-server/.config/opencode/opencode.jsonc
