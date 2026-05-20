@@ -34,6 +34,20 @@ git checkout .
 - **`scripts/`** contains installation helpers (backup, restore, package installation, SSH setup) — these are NOT stow packages and are not symlinked.
 - **`bin/`, `bin-macos/`, `bin-linux/`** contain personal scripts that get symlinked to `~/.local/bin/`.
 
+## Server-Specific Overrides
+
+The `opencode-server/` package overlays `opencode/` on the Home Assistant server (mac mini at 192.168.30.10).
+
+When modifying skills or agents in `opencode/`, check if `opencode-server/` needs parallel updates.
+Currently only `skills/home-assistant/` differs between environments:
+- **Client machines** (`opencode/`): Uses SSH to access Home Assistant remotely
+- **Server** (`opencode-server/`): Uses local Docker commands (no SSH)
+
+The `install-macos.sh` script auto-detects the server environment by:
+1. Checking if the machine has IP 192.168.30.10
+2. Fallback: Checking if `homeassistant` Docker container is running locally
+
+
 ## Conventions
 
 - Theme: Catppuccin Mocha across all tools.

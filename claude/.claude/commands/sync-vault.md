@@ -1,5 +1,5 @@
 ---
-allowed-tools: mcp__obsidian__obsidian_list_files_in_dir, mcp__obsidian__obsidian_list_files_in_vault, mcp__obsidian__obsidian_batch_get_file_contents, Read, Edit, Glob, AskUserQuestion
+allowed-tools: Bash(obsidian:*), Read, Edit, Glob, AskUserQuestion
 description: Sync the note-taker agent definition with the actual Obsidian vault structure
 ---
 
@@ -20,7 +20,7 @@ Synchronize the `note-taker` agent definition with the actual Obsidian vault str
 
 ### 2. Scan the vault folder structure
 
-- Call `mcp__obsidian__obsidian_list_files_in_dir` for each top-level PARA folder:
+- Call `obsidian folders folder="..."` for each top-level PARA folder:
   - `1. Projects/`
   - `2. Areas/`
   - `3. Resources/`
@@ -28,13 +28,14 @@ Synchronize the `note-taker` agent definition with the actual Obsidian vault str
   - `Daily/`
   - `Templates/`
   - `_QuickNote/`
-- For each subfolder of `3. Resources/`, scan one level deeper to capture sub-subfolders (e.g. `Guides/Audio Setup/`)
-- **Only record directories** (entries ending in `/`), not individual note files
+- `obsidian folders` returns folder paths; record those paths directly and do not include note files
+- Capture nested folders such as `3. Resources/Guides/Audio Setup`
 
 ### 3. Read all templates
 
 - List the `Templates/` directory
-- Use `mcp__obsidian__obsidian_batch_get_file_contents` to read all template files
+- Use `obsidian files folder="Templates" ext=md` to list template files
+- Use `obsidian read path="Templates/<template>.md"` to read each template file
 - Extract from them:
   - **Frontmatter schema**: required and optional fields, allowed values for `type` and `status`
   - **Daily Note Template**: sections, template variables (`{{date:...}}` patterns)

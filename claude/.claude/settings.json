@@ -7,7 +7,7 @@
       "Bash(find:*)",
       "Bash(git ls-tree:*)",
       "Bash(defaults:*)",
-      "mcp__obsidian__*",
+      "Bash(obsidian:*)",
       "mcp__context7__query-docs",
       "mcp__github__list_pull_requests",
       "WebSearch",

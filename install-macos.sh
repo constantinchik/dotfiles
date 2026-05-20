@@ -98,6 +98,20 @@ SHARED_PACKAGES=(
     bin
 )
 
+# Detect if running on Home Assistant server (mac mini)
+detect_server_environment() {
+    local server_ip="192.168.30.10"
+    # Primary: Check if we have the server IP
+    if ifconfig | grep -q "$server_ip"; then
+        return 0
+    fi
+    # Fallback: Check if homeassistant container is running locally
+    if docker ps --format "{{.Names}}" 2>/dev/null | grep -q "homeassistant"; then
+        return 0
+    fi
+    return 1
+}
+
 # macOS-specific packages
 MACOS_PACKAGES=(
     zsh-macos
@@ -106,6 +120,18 @@ MACOS_PACKAGES=(
     ghostty
     bin-macos
 )
+
+# Detect server and add appropriate opencode packages
+if detect_server_environment; then
+    echo "Server environment detected - using local Home Assistant configuration"
+    # On server: stow both shared and server-specific (overlay)
+    MACOS_PACKAGES+=(opencode opencode-server)
+else
+    echo "Client environment detected - using SSH-based Home Assistant configuration"
+    # On client: only shared opencode
+    MACOS_PACKAGES+=(opencode)
+fi
+
 
 # Stow shared packages
 for pkg in "${SHARED_PACKAGES[@]}"; do
@@ -201,3 +227,4 @@ configure_home_server_ssh() {
 configure_home_server_ssh
 
 echo "macOS dotfiles installation complete!"
+
