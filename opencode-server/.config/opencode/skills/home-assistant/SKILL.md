@@ -20,7 +20,7 @@ All runtime operations use local Docker commands.
 
 Since Home Assistant runs on this server, use local Docker commands:
 
-\`\`\`bash
+```bash
 # Check container status
 docker compose ps homeassistant
 
@@ -32,15 +32,15 @@ docker exec home-assistant ls /config/.storage
 
 # Restart Home Assistant
 docker restart homeassistant
-\`\`\`
+```
 
 ### Discovering the Container Name
 
 If the container name differs, discover it first:
 
-\`\`\`bash
+```bash
 docker ps --format "{{.Names}}" | grep -i home
-\`\`\`
+```
 
 ## Configuration vs Runtime
 
@@ -61,9 +61,9 @@ docker ps --format "{{.Names}}" | grep -i home
 1. **Edit** configuration files locally in \`config/homeassistant/\`
 2. **Commit** changes to git
 3. **Deploy** using the script (handles submodule updates and restart):
-   \`\`\`bash
+   ```bash
    ./deploy.sh
-   \`\`\`
+   ```
 
 The deploy script will:
 - Pull latest Home Assistant configuration from the submodule
@@ -92,7 +92,7 @@ See: \`/Users/cost/Projects/home-server/AGENTS.md\`
 
 ## Useful Local Commands
 
-\`\`\`bash
+```bash
 # Check HomeKit proxy status
 ./scripts/homekit-mdns-proxy.sh status
 
@@ -104,4 +104,4 @@ launchctl list | grep matter
 
 # Validate YAML syntax
 docker exec homeassistant python3 -c "import yaml; yaml.safe_load(open(\"/config/configuration.yaml\"))"
-\`\`\`
+```
