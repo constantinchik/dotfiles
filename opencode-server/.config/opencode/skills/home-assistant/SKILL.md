@@ -46,10 +46,13 @@ docker ps --format "{{.Names}}" | grep -i home
 
 **Configuration files** (edit locally in this repo):
 - `config/homeassistant/configuration.yaml` - Main configuration
-- `config/homeassistant/ui-lovelace.yaml` - Dashboard definitions
 - `config/homeassistant/automations.yaml` - Automations
 - `config/homeassistant/scripts.yaml` - Scripts
 - `config/homeassistant/scenes.yaml` - Scenes
+
+**Dashboards** (storage mode - editable via UI):
+- Dashboards are stored in `/config/.storage/lovelace.lovelace` inside the container
+- Edit via Home Assistant UI: Dashboard → ⋮ → "Edit Dashboard"
 
 **Runtime data** (local on this machine):
 - `/config/.storage/` - Entity registry, integration configs, state
@@ -84,7 +87,7 @@ See: `/Users/cost/Projects/home-server/AGENTS.md`
 
 ## Key Technical Details
 
-- **Lovelace dashboards**: Defined in `ui-lovelace.yaml` (YAML mode), stored in git
+- **Lovelace dashboards**: Storage mode (UI-editable), stored in `/config/.storage/lovelace.lovelace`
 - **Matter Server**: Native macOS service at `ws://host.docker.internal:5580/ws`  
 - **HomeKit**: Uses `scripts/homekit-mdns-proxy.sh` for Bonjour advertisements on ports `21064` and `21065`
 - **Secrets**: Never expose `/config/secrets.yaml`, `.storage/`, tokens, or backup contents
