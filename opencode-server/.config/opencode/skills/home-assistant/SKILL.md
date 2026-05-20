@@ -45,20 +45,20 @@ docker ps --format "{{.Names}}" | grep -i home
 ## Configuration vs Runtime
 
 **Configuration files** (edit locally in this repo):
-- \`config/homeassistant/configuration.yaml\` - Main configuration
-- \`config/homeassistant/ui-lovelace.yaml\` - Dashboard definitions
-- \`config/homeassistant/automations.yaml\` - Automations
-- \`config/homeassistant/scripts.yaml\` - Scripts
-- \`config/homeassistant/scenes.yaml\` - Scenes
+- `config/homeassistant/configuration.yaml` - Main configuration
+- `config/homeassistant/ui-lovelace.yaml` - Dashboard definitions
+- `config/homeassistant/automations.yaml` - Automations
+- `config/homeassistant/scripts.yaml` - Scripts
+- `config/homeassistant/scenes.yaml` - Scenes
 
 **Runtime data** (local on this machine):
-- \`/config/.storage/\` - Entity registry, integration configs, state
-- \`/config/home-assistant.log\` - Runtime logs
+- `/config/.storage/` - Entity registry, integration configs, state
+- `/config/home-assistant.log` - Runtime logs
 - Docker volumes and databases
 
 ## Deployment Workflow
 
-1. **Edit** configuration files locally in \`config/homeassistant/\`
+1. **Edit** configuration files locally in `config/homeassistant/`
 2. **Commit** changes to git
 3. **Deploy** using the script (handles submodule updates and restart):
    ```bash
@@ -80,15 +80,15 @@ For complete project documentation including:
 - Troubleshooting common issues (mDNS, Matter, HomeKit)
 - Backup and restore procedures
 
-See: \`/Users/cost/Projects/home-server/AGENTS.md\`
+See: `/Users/cost/Projects/home-server/AGENTS.md`
 
 ## Key Technical Details
 
-- **Lovelace dashboards**: Defined in \`ui-lovelace.yaml\` (YAML mode), stored in git
-- **Matter Server**: Native macOS service at \`ws://host.docker.internal:5580/ws\`  
-- **HomeKit**: Uses \`scripts/homekit-mdns-proxy.sh\` for Bonjour advertisements on ports \`21064\` and \`21065\`
-- **Secrets**: Never expose \`/config/secrets.yaml\`, \`.storage/\`, tokens, or backup contents
-- **Backup location**: \`backups/\` directory (not committed to git)
+- **Lovelace dashboards**: Defined in `ui-lovelace.yaml` (YAML mode), stored in git
+- **Matter Server**: Native macOS service at `ws://host.docker.internal:5580/ws`  
+- **HomeKit**: Uses `scripts/homekit-mdns-proxy.sh` for Bonjour advertisements on ports `21064` and `21065`
+- **Secrets**: Never expose `/config/secrets.yaml`, `.storage/`, tokens, or backup contents
+- **Backup location**: `backups/` directory (not committed to git)
 
 ## Useful Local Commands
 
