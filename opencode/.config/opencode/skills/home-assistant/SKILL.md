@@ -50,13 +50,29 @@ ssh home 'docker ps --format "{{.Names}}" | grep -i home'
 - `config/homeassistant/scenes.yaml` - Scenes
 
 **Dashboards** (storage mode - editable via UI):
-- Dashboards are stored in `/config/.storage/lovelace.lovelace` inside the container
-- Edit via Home Assistant UI: Dashboard → ⋮ → "Edit Dashboard"
+- **Main dashboard** (`/lovelace`): Uses Bubble Cards - stored in `/config/.storage/lovelace.lovelace`
+- **Old dashboard** (`/old-home`): Original pre-Bubble dashboard - stored in `/config/.storage/lovelace.old-home`
+- Edit by patching storage files directly and restarting HA
 
 **Runtime data** (on remote host only):
 - `/config/.storage/` - Entity registry, integration configs, state
 - `/config/home-assistant.log` - Runtime logs
 - Docker volumes and databases
+
+## Dashboard Philosophy
+
+We use **Bubble Cards** for the primary dashboard interface:
+- **Room cards** (`custom:bubble-card` with `card_type: button`) - Quick access to lights, climate, media
+- **Modal popups** (`card_type: pop-up`) - Detailed controls for rooms, scenes, automations, system
+- **Categorized automations** - Bubble buttons grouped by function (Motion, Adaptive, BILRESA, Air, TV, Sync, Notifications)
+- **Consistent interactions** - Tap to toggle, hold for more-info
+
+Dashboard modifications:
+1. Backup current dashboard: `docker cp homeassistant:/config/.storage/lovelace.lovelace /path/to/backup`
+2. Create patch script to modify JSON structure
+3. Apply patch: `cat lovelace.bubble | python3 patch.py > lovelace.bubble.new`
+4. Deploy: `docker cp lovelace.bubble.new homeassistant:/config/.storage/lovelace.lovelace && docker restart homeassistant`
+5. Verify: `curl http://127.0.0.1:40104/lovelace` returns 200
 
 ## Deployment Workflow
 
@@ -86,7 +102,7 @@ See: `/Users/cost/Projects/home-server/AGENTS.md`
 
 ## Key Technical Details
 
-- **Lovelace dashboards**: Storage mode (UI-editable), stored in `/config/.storage/lovelace.lovelace`
+- **Lovelace dashboards**: Storage mode, stored in `/config/.storage/lovelace.lovelace`
 - **Matter Server**: Native macOS service at `ws://host.docker.internal:5580/ws`  
 - **HomeKit**: Uses `scripts/homekit-mdns-proxy.sh` for Bonjour advertisements on ports `21064` and `21065`
 - **Secrets**: Never expose `/config/secrets.yaml`, `.storage/`, tokens, or backup contents
@@ -106,4 +122,7 @@ ssh home 'launchctl list | grep matter'
 
 # Validate YAML syntax
 ssh home 'docker exec homeassistant python3 -c "import yaml; yaml.safe_load(open(\"/config/configuration.yaml\"))"'
+
+# List registered automation entities
+ssh home 'docker exec homeassistant python3 -c "import json; data=json.load(open(\"/config/.storage/core.entity_registry\")); [print(e[\"entity_id\"]) for e in data[\"data\"][\"entities\"] if e[\"entity_id\"].startswith(\"automation.\")]"'
 ```

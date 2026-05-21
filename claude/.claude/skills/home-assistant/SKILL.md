@@ -1,35 +1,36 @@
 ---
 name: home-assistant
 description: Inspect and troubleshoot Home Assistant for the home-server project. Use when the user asks about Home Assistant state, logs, entities, configuration, Lovelace storage, Matter, HomeKit, or related Docker runtime behavior.
-compatibility: opencode
+argument-hint: [command]
 ---
 
 # Home Assistant
 
-Home Assistant runs **locally** on this server via Docker. This is the opencode-server configuration, so all commands run directly without SSH.
+Home Assistant runs on a remote host (reachable via `ssh home`), not on the client machine where this agent is currently running.
 
 ## Architecture
 
-**This server**: Runs Home Assistant Docker container and all related services natively.
+**Client machine** (where you are now): Contains this repository with configuration files and scripts.
+**Remote host** (`home`): Runs the actual Home Assistant Docker container and all related services.
 
-All runtime operations use direct Docker commands - no SSH needed.
+All runtime operations (checking logs, restarting containers, viewing state) require SSH access to the remote host.
 
-## Access Commands (Local)
+## Access via SSH
 
-Since Home Assistant runs locally, use direct commands:
+Since Home Assistant runs remotely, you must use SSH to execute any runtime commands:
 
 ```bash
 # Check container status
-docker compose ps homeassistant
+ssh home 'docker compose ps homeassistant'
 
 # View recent logs
-docker compose logs --tail=200 homeassistant
+ssh home 'docker compose logs --tail=200 homeassistant'
 
 # Inspect container filesystem
-docker exec homeassistant ls /config/.storage
+ssh home 'docker exec home-assistant ls /config/.storage'
 
 # Restart Home Assistant
-docker restart homeassistant
+ssh home 'docker restart homeassistant'
 ```
 
 ### Discovering the Container Name
@@ -37,10 +38,10 @@ docker restart homeassistant
 If the container name differs, discover it first:
 
 ```bash
-docker ps --format "{{.Names}}" | grep -i home
+ssh home 'docker ps --format "{{.Names}}" | grep -i home'
 ```
 
-## Local Configuration vs Runtime
+## Local Configuration vs Remote Runtime
 
 **Configuration files** (edit locally in this repo):
 - `config/homeassistant/configuration.yaml` - Main configuration
@@ -48,12 +49,12 @@ docker ps --format "{{.Names}}" | grep -i home
 - `config/homeassistant/scripts.yaml` - Scripts
 - `config/homeassistant/scenes.yaml` - Scenes
 
-**Dashboards** (storage mode):
+**Dashboards** (storage mode - editable via UI):
 - **Main dashboard** (`/lovelace`): Uses Bubble Cards - stored in `/config/.storage/lovelace.lovelace`
 - **Old dashboard** (`/old-home`): Original pre-Bubble dashboard - stored in `/config/.storage/lovelace.old-home`
 - Edit by patching storage files directly and restarting HA
 
-**Runtime data** (local):
+**Runtime data** (on remote host only):
 - `/config/.storage/` - Entity registry, integration configs, state
 - `/config/home-assistant.log` - Runtime logs
 - Docker volumes and databases
@@ -67,10 +68,10 @@ We use **Bubble Cards** for the primary dashboard interface:
 - **Consistent interactions** - Tap to toggle, hold for more-info
 
 Dashboard modifications:
-1. Backup: `cp /path/to/homeassistant/.storage/lovelace.lovelace /path/to/backup`
+1. Backup current dashboard: `docker cp homeassistant:/config/.storage/lovelace.lovelace /path/to/backup`
 2. Create patch script to modify JSON structure
 3. Apply patch: `cat lovelace.bubble | python3 patch.py > lovelace.bubble.new`
-4. Deploy: `cp lovelace.bubble.new /path/to/homeassistant/.storage/lovelace.lovelace && docker restart homeassistant`
+4. Deploy: `docker cp lovelace.bubble.new homeassistant:/config/.storage/lovelace.lovelace && docker restart homeassistant`
 5. Verify: `curl http://127.0.0.1:40104/lovelace` returns 200
 
 ## Deployment Workflow
@@ -97,7 +98,7 @@ For complete project documentation including:
 - Troubleshooting common issues (mDNS, Matter, HomeKit)
 - Backup and restore procedures
 
-See: `AGENTS.md` in the home-server repository
+See: `/Users/cost/Projects/home-server/AGENTS.md`
 
 ## Key Technical Details
 
@@ -107,21 +108,21 @@ See: `AGENTS.md` in the home-server repository
 - **Secrets**: Never expose `/config/secrets.yaml`, `.storage/`, tokens, or backup contents
 - **Backup location**: `backups/` directory (not committed to git)
 
-## Useful Commands (Local)
+## Useful Remote Commands
 
 ```bash
 # Check HomeKit proxy status
-./scripts/homekit-mdns-proxy.sh status
+ssh home './scripts/homekit-mdns-proxy.sh status'
 
 # View live logs
-docker logs homeassistant -f
+ssh home 'docker logs homeassistant -f'
 
 # Check Matter server
-launchctl list | grep matter
+ssh home 'launchctl list | grep matter'
 
 # Validate YAML syntax
-docker exec homeassistant python3 -c "import yaml; yaml.safe_load(open(\"/config/configuration.yaml\"))"
+ssh home 'docker exec homeassistant python3 -c "import yaml; yaml.safe_load(open(\"/config/configuration.yaml\"))"'
 
 # List registered automation entities
-docker exec homeassistant python3 -c "import json; data=json.load(open(\"/config/.storage/core.entity_registry\")); [print(e[\"entity_id\"]) for e in data[\"data\"][\"entities\"] if e[\"entity_id\"].startswith(\"automation.\")]"
+ssh home 'docker exec homeassistant python3 -c "import json; data=json.load(open(\"/config/.storage/core.entity_registry\")); [print(e[\"entity_id\"]) for e in data[\"data\"][\"entities\"] if e[\"entity_id\"].startswith(\"automation.\")]"'
 ```
