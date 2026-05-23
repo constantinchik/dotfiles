@@ -125,7 +125,7 @@ MACOS_PACKAGES=(
 if detect_server_environment; then
     echo "Server environment detected - using local Home Assistant configuration"
     # On server: stow both shared and server-specific (overlay)
-    MACOS_PACKAGES+=(opencode opencode-server)
+    MACOS_PACKAGES+=(opencode opencode-server zsh-macos-server)
 else
     echo "Client environment detected - using SSH-based Home Assistant configuration"
     # On client: only shared opencode
@@ -164,67 +164,6 @@ elif [ -z "$MACOS_SETTINGS" ]; then
         "$SCRIPT_DIR/scripts/macos/set-macos-settings.sh"
     fi
 fi
-
-# Configure SSH connection to home-server (WSL machine)
-configure_home_server_ssh() {
-    local SSH_DIR="$HOME/.ssh"
-    local SSH_CONFIG="$SSH_DIR/config"
-    local WSL_KEY="$SSH_DIR/id_wsl"
-    local HOME_SERVER_HOST="${HOME_SERVER:-192.168.30.10}"
-    local HOME_SERVER_ALIAS="wsl"
-    local HOME_SERVER_USER="${HOME_SERVER_USER:-const}"
-
-    echo ""
-    echo "Configuring SSH connection to home-server (WSL)..."
-
-    # Ensure .ssh directory exists
-    mkdir -p "$SSH_DIR"
-    chmod 700 "$SSH_DIR"
-
-    # Check if private key exists
-    if [[ ! -f "$WSL_KEY" ]]; then
-        echo ""
-        echo "⚠ WSL private key not found at $WSL_KEY"
-        echo ""
-        echo "On your WSL machine, run: ./scripts/setup-ssh-keys.sh"
-        echo "Then copy the displayed private key content to $WSL_KEY"
-        echo "Then re-run this script to complete SSH configuration."
-        echo ""
-        return 0
-    fi
-
-    # Set correct permissions on the key
-    chmod 600 "$WSL_KEY"
-    echo "✓ Private key found at $WSL_KEY"
-
-    # Check if SSH config already has WSL entry
-    if [[ -f "$SSH_CONFIG" ]] && grep -q "^Host $HOME_SERVER_ALIAS$" "$SSH_CONFIG" 2>/dev/null; then
-        echo "✓ SSH config entry for '$HOME_SERVER_ALIAS' already exists"
-    else
-        # Add SSH config entry
-        echo "" >> "$SSH_CONFIG"
-        echo "Host $HOME_SERVER_ALIAS" >> "$SSH_CONFIG"
-        echo "    HostName $HOME_SERVER_HOST" >> "$SSH_CONFIG"
-        echo "    User $HOME_SERVER_USER" >> "$SSH_CONFIG"
-        echo "    IdentityFile $WSL_KEY" >> "$SSH_CONFIG"
-        echo "✓ Added SSH config entry for '$HOME_SERVER_ALIAS'"
-    fi
-
-    # Test connection
-    echo ""
-    echo "Testing SSH connection to WSL..."
-    if ssh -o ConnectTimeout=5 -o BatchMode=yes "$HOME_SERVER_ALIAS" exit 2>/dev/null; then
-        echo "✓ SSH connection to WSL works!"
-        echo "  Connect with: ssh $HOME_SERVER_ALIAS"
-    else
-        echo "⚠ SSH connection test failed"
-        echo "  Ensure WSL machine is running and SSH server is started"
-        echo "  On WSL, run: sudo systemctl restart ssh"
-    fi
-    echo ""
-}
-
-configure_home_server_ssh
 
 echo "macOS dotfiles installation complete!"
 

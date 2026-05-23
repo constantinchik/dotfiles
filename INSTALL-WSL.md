@@ -1,5 +1,9 @@
 # WSL/Ubuntu Installation Guide
 
+> **⚠️ OBSOLETE.** The home server no longer runs on WSL — it runs on the Mac mini.
+> This guide is kept for reference only (in case a Windows/WSL dev client is ever
+> set up) and is not part of the current setup.
+
 This guide will help you set up your dotfiles on WSL (Windows Subsystem for Linux) with Ubuntu.
 
 ## Prerequisites

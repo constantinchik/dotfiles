@@ -1,0 +1,18 @@
+# ~/.zshrc.local on the home server (Mac mini) — overrides the shared client
+# version (zsh/.zshrc.local) via the zsh-macos-server stow overlay, which
+# install-macos.sh stows only when detect_server_environment is true.
+#
+# `hermes` runs the agent locally in the hermes-agent container (the gateway
+# that owns the hermes-home volume). Uses $PWD as the workspace when it's under
+# ~/Projects, else defaults to ~/Projects. Hermes runs entirely in Docker; the
+# native host install was removed.
+hermes() {
+	local cwd="$PWD"
+	case "$cwd" in
+		"$HOME"/Projects*) ;;
+		*) cwd="$HOME/Projects" ;;
+	esac
+	local flags=-i
+	[ -t 0 ] && [ -t 1 ] && flags=-it
+	docker exec $flags -u 501:20 -w "$cwd" hermes-agent /opt/hermes/.venv/bin/hermes "$@"
+}
