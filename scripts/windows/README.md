@@ -1,5 +1,9 @@
 # Windows Terminal Setup for WSL
 
+> **⚠️ OBSOLETE.** The home server no longer runs on WSL — it runs on the Mac mini.
+> These scripts are kept for reference only (in case a Windows/WSL dev client is ever
+> set up) and are not part of the current setup.
+
 This directory contains PowerShell scripts to configure Windows Terminal with your WSL dotfiles.
 
 ## Quick Start

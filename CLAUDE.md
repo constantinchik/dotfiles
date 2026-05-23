@@ -36,12 +36,16 @@ git checkout .
 
 ## Server-Specific Overrides
 
-The `opencode-server/` package overlays `opencode/` on the Home Assistant server (mac mini at 192.168.30.10).
+Server-only packages overlay their shared counterparts on the Home Assistant server (mac mini at 192.168.30.10):
+- **`opencode-server/`** overlays `opencode/`. Only `skills/home-assistant/` differs:
+  - **Client machines** (`opencode/`): Uses SSH to access Home Assistant remotely
+  - **Server** (`opencode-server/`): Uses local Docker commands (no SSH)
+- **`zsh-macos-server/`** overlays the shared `zsh/.zshrc.local` to redefine the `hermes` command:
+  - **Client machines** (`zsh/.zshrc.local`): `hermes` runs `ssh -t home docker exec ... hermes-agent` (the agent runs in Docker on the mac mini)
+  - **Server** (`zsh-macos-server/.zshrc.local`): `hermes` runs `docker exec` locally against the `hermes-agent` container
+  - The override works because `install-macos.sh` stows `zsh` first, then `zsh-macos-server` with `--override`.
 
-When modifying skills or agents in `opencode/`, check if `opencode-server/` needs parallel updates.
-Currently only `skills/home-assistant/` differs between environments:
-- **Client machines** (`opencode/`): Uses SSH to access Home Assistant remotely
-- **Server** (`opencode-server/`): Uses local Docker commands (no SSH)
+When modifying skills/agents in `opencode/` or the shared `zsh/.zshrc.local`, check if the `*-server/` overlay needs a parallel update.
 
 The `install-macos.sh` script auto-detects the server environment by:
 1. Checking if the machine has IP 192.168.30.10

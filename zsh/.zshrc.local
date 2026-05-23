@@ -1,0 +1,9 @@
+# ~/.zshrc.local — machine-local zsh config (sourced by zsh/.zshrc).
+#
+# Default `hermes` for CLIENT machines (macOS + Linux): run the agent on the
+# home server's hermes-agent container over SSH (`home` must be a configured
+# ssh alias for the Mac mini). The server itself overrides this file with a
+# local `docker exec` version via the zsh-macos-server stow overlay.
+hermes() {
+	ssh -t home "docker exec -it -u 501:20 -w /Users/clawstantine/Projects hermes-agent /opt/hermes/.venv/bin/hermes ${(q)@}"
+}
