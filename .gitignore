@@ -6,6 +6,16 @@
 # Ignore claude as it installs to the same location as our bin scripts
 bin-macos/.local/bin/claude
 
+# CuaDriver.app-managed symlinks (CLI binary + skill dirs -> /Applications/CuaDriver.app);
+# machine-local, not tracked. Listed in every stow path the app/installer can land in.
+bin-macos/.local/bin/cua-driver
+claude/.claude/skills/cua-driver
+opencode/.config/opencode/skills/cua-driver
+opencode-server/.config/opencode/skills/cua-driver
+
+# uv-managed python shim from the (removed) hermes installer — use pyenv instead
+bin-macos/.local/bin/python3.11
+
 # Claude Code runtime data (keep only agents, commands, settings, skills)
 claude/.claude/backups/
 claude/.claude/cache/
