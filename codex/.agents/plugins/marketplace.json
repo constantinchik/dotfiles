@@ -1,0 +1,20 @@
+{
+  "name": "constantinchik-dotfiles",
+  "interface": {
+    "displayName": "Constantine Dotfiles"
+  },
+  "plugins": [
+    {
+      "name": "obsidian-vault",
+      "source": {
+        "source": "local",
+        "path": "./.codex/plugins/obsidian-vault"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

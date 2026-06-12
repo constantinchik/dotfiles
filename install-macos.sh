@@ -96,6 +96,7 @@ SHARED_PACKAGES=(
     yazi
     opencode
     bin
+    codex
 )
 
 # Detect if running on Home Assistant server (mac mini)
@@ -138,7 +139,11 @@ for pkg in "${SHARED_PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
         cleanup_broken_symlinks "$pkg"
         echo "  Stowing $pkg..."
-        stow -t ~ -R --adopt --override='.*' "$pkg"
+        if [ "$pkg" = "codex" ]; then
+            stow -t ~ -R --no-folding --adopt --override='.*' "$pkg"
+        else
+            stow -t ~ -R --adopt --override='.*' "$pkg"
+        fi
     fi
 done
 
@@ -150,6 +155,9 @@ for pkg in "${MACOS_PACKAGES[@]}"; do
         stow -t ~ -R --adopt --override='.*' "$pkg"
     fi
 done
+
+# Enable stowed Codex plugins that need persisted install state
+"$SCRIPT_DIR/scripts/codex/enable-obsidian-plugin.sh"
 
 # Restore repo files that --adopt may have overwritten with pre-existing configs
 echo "Restoring dotfiles to repo versions..."
