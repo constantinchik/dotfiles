@@ -78,6 +78,7 @@ SHARED_PACKAGES=(
     yazi
     opencode
     bin
+    btop
 )
 
 # Linux-specific packages

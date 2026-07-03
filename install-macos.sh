@@ -96,6 +96,7 @@ SHARED_PACKAGES=(
     yazi
     opencode
     bin
+    btop
 )
 
 # Detect if running on Home Assistant server (mac mini)

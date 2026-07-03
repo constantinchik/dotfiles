@@ -16,5 +16,6 @@ diff-so-fancy
 less
 luarocks
 ncdu
+btop
 oven-sh/bun/bun
 yazi
