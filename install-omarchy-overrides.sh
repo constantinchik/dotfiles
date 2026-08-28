@@ -151,6 +151,21 @@ EOF
     echo "  + wired $mod.lua -> hypr/personal/$mod.lua"
 done
 
+# Window rules have no Omarchy-managed counterpart to reduce to a stub, so the
+# require is appended to hyprland.lua instead. Omarchy owns that file, so
+# `omarchy refresh hyprland` drops the line and re-running this restores it.
+windows_require='require("hypr.personal.windows")'
+if grep -qF "$windows_require" "$HYPRLAND_LUA"; then
+    echo "  - hyprland.lua already requires hypr/personal/windows.lua"
+else
+    {
+        echo ""
+        echo "-- Personal window rules (hypr/personal/ is not managed by omarchy refresh)."
+        echo "$windows_require"
+    } >> "$HYPRLAND_LUA"
+    echo "  + appended windows require to hyprland.lua"
+fi
+
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Installing Omarchy shell config"
