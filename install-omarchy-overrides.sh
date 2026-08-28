@@ -7,8 +7,13 @@ set -euo pipefail
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$SCRIPT_DIR"
 
-HYPRLAND_CONF="$HOME/.config/hypr/hyprland.conf"
-OVERRIDE_SOURCE="source = ~/.config/hypr/omarchy-overrides.conf"
+HYPR_DIR="$HOME/.config/hypr"
+HYPRLAND_LUA="$HYPR_DIR/hyprland.lua"
+# Omarchy ships (and rewrites) these four. Each is reduced to a one-line
+# require pointing at hypr/personal/, which Omarchy never touches.
+PERSONAL_MODULES=(monitors input bindings looknfeel)
+SHELL_JSON_SRC="$SCRIPT_DIR/omarchy-shell/shell.json"
+SHELL_JSON_DST="$HOME/.config/omarchy/shell.json"
 SCRIPTS_DIR="$SCRIPT_DIR/scripts/omarchy"
 
 # ╔══════════════════════════════════════════════════════════════════════╗
@@ -63,9 +68,9 @@ if ! command -v stow &>/dev/null; then
     sudo pacman -S --noconfirm stow || { notify_error "Failed to install stow"; exit 1; }
 fi
 
-# Check if Hyprland config exists
-if [[ ! -f "$HYPRLAND_CONF" ]]; then
-    notify_error "Hyprland config not found at $HYPRLAND_CONF. Please install omarchy first."
+# Check if Hyprland config exists (Omarchy 4 "Quattro" and later use Lua)
+if [[ ! -f "$HYPRLAND_LUA" ]]; then
+    notify_error "Hyprland config not found at $HYPRLAND_LUA. Omarchy 4+ required."
     exit 1
 fi
 
@@ -124,19 +129,62 @@ echo "      Use 'git checkout <package>' to restore repo versions if needed."
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Configuring Hyprland to source overrides"
+echo "Wiring Hyprland to personal modules"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-if ! grep -qF "omarchy-overrides.conf" "$HYPRLAND_CONF"; then
-    echo "Adding source line to $HYPRLAND_CONF..."
+for mod in "${PERSONAL_MODULES[@]}"; do
+    target="$HYPR_DIR/$mod.lua"
+    require_line="require(\"hypr.personal.$mod\")"
+
+    if [[ -f "$target" ]] && grep -qF "$require_line" "$target"; then
+        echo "  - $mod.lua already wired"
+        continue
+    fi
+
+    [[ -f "$target" ]] && cp "$target" "$target.bak.$(date +%s)"
+    cat > "$target" <<EOF
+-- Personal configuration lives in hypr/personal/, a path Omarchy does not
+-- manage, so \`omarchy refresh\` and future migrations cannot overwrite it.
+-- hypr/personal/ is a stow symlink into this dotfiles repo.
+$require_line
+EOF
+    echo "  + wired $mod.lua -> hypr/personal/$mod.lua"
+done
+
+# Window rules have no Omarchy-managed counterpart to reduce to a stub, so the
+# require is appended to hyprland.lua instead. Omarchy owns that file, so
+# `omarchy refresh hyprland` drops the line and re-running this restores it.
+windows_require='require("hypr.personal.windows")'
+if grep -qF "$windows_require" "$HYPRLAND_LUA"; then
+    echo "  - hyprland.lua already requires hypr/personal/windows.lua"
+else
     {
         echo ""
-        echo "# Personal overrides (added by install-omarchy-overrides.sh)"
-        echo "$OVERRIDE_SOURCE"
-    } >> "$HYPRLAND_CONF"
-    echo "Source line added successfully"
+        echo "-- Personal window rules (hypr/personal/ is not managed by omarchy refresh)."
+        echo "$windows_require"
+    } >> "$HYPRLAND_LUA"
+    echo "  + appended windows require to hyprland.lua"
+fi
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Installing Omarchy shell config"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Deliberately a copy, not a stow symlink: `omarchy bar ...` and tray pinning
+# rewrite shell.json with `mv $tmp shell.json`, which would silently replace a
+# symlink with a regular file and detach it from this repo.
+if [[ -f "$SHELL_JSON_SRC" ]]; then
+    mkdir -p "$(dirname "$SHELL_JSON_DST")"
+    if [[ -f "$SHELL_JSON_DST" ]] && ! cmp -s "$SHELL_JSON_SRC" "$SHELL_JSON_DST"; then
+        cp "$SHELL_JSON_DST" "$SHELL_JSON_DST.bak.$(date +%s)"
+        echo "  backed up existing shell.json"
+    fi
+    cp "$SHELL_JSON_SRC" "$SHELL_JSON_DST"
+    echo "  + shell.json installed (copy)"
+    echo "    NOTE: local edits do not flow back; re-copy into the repo to keep them."
 else
-    echo "Source line already exists in $HYPRLAND_CONF"
+    echo "  - $SHELL_JSON_SRC not found, skipping"
 fi
 
 # ╔══════════════════════════════════════════════════════════════════════╗
@@ -152,19 +200,13 @@ if [[ -d "$SCRIPTS_DIR" ]]; then
     # 2. Install pyprland (depends on packages)
     run_script "$SCRIPTS_DIR/install-pyprland.sh" || true
 
-    # 3. Install waybar indicator scripts
-    run_script "$SCRIPTS_DIR/install-waybar-indicators.sh" || true
-
-    # 4. Patch waybar config (depends on indicators)
-    run_script "$SCRIPTS_DIR/install-waybar-overrides.sh" || true
-
-    # 5. Add bash aliases
+    # 3. Add bash aliases
     run_script "$SCRIPTS_DIR/install-bash-aliases.sh" || true
 
-    # 6. Enable Xbox controller support
+    # 4. Enable Xbox controller support
     run_script "$SCRIPTS_DIR/install-xbox-support.sh" || true
 
-    # 7. Hide LSP plugin entries
+    # 5. Hide LSP plugin entries
     run_script "$SCRIPTS_DIR/install-lsp-hide.sh" || true
 else
     echo "Scripts directory not found at $SCRIPTS_DIR, skipping additional installations"
@@ -185,10 +227,10 @@ if command -v hyprctl &>/dev/null && hyprctl version &>/dev/null; then
     hyprctl reload || echo "Warning: Could not reload Hyprland"
 fi
 
-# Restart waybar using omarchy's script (handles uwsm properly)
-if pgrep -x waybar &>/dev/null; then
-    echo "Restarting waybar..."
-    omarchy-restart-waybar
+# Restart the Omarchy shell (bar, notifications, OSD all live in one process)
+if command -v omarchy &>/dev/null; then
+    echo "Restarting Omarchy shell..."
+    omarchy restart shell || echo "Warning: Could not restart the Omarchy shell"
 fi
 
 # ╔══════════════════════════════════════════════════════════════════════╗
@@ -201,11 +243,12 @@ echo "║           Omarchy overrides installation complete!                   �
 echo "╚══════════════════════════════════════════════════════════════════════╝"
 echo ""
 echo "Installed components:"
-echo "  • Hyprland overrides (monitors, input, bindings, animations)"
-echo "  • Personal configs (nvim, kitty, lazygit, tmux) - with --adopt"
+echo "  • Hyprland overrides via hypr/personal/ (monitors, input, bindings, looknfeel)"
+echo "  • Omarchy shell config (bar layout, floating pills, NordVPN widget)"
+echo "  • Shell plugins: cost.bar (pill bar), cost.tray (inline tray)"
+echo "  • Personal configs (nvim, tmux) - with --adopt"
 echo "  • Custom utility scripts (~/.local/bin/)"
 echo "  • Pyprland configuration"
-echo "  • Waybar indicators (NordVPN, Wiremix)"
 echo "  • Bash aliases (lg, gst)"
 echo "  • Xbox USB controller support"
 echo "  • LSP plugin entries hidden"
