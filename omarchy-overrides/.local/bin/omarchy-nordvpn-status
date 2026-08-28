@@ -1,0 +1,18 @@
+#!/bin/bash
+# Bar indicator for NordVPN. Emits waybar-style JSON consumed by the
+# Omarchy shell's custom `exec` bar module.
+
+status=$(timeout 5 nordvpn status 2>/dev/null | tr -d '\r')
+
+state=$(sed -n 's/^ *Status: *//p' <<<"$status" | head -1)
+country=$(sed -n 's/^ *Country: *//p' <<<"$status" | head -1)
+city=$(sed -n 's/^ *City: *//p' <<<"$status" | head -1)
+server=$(sed -n 's/^ *Hostname: *//p' <<<"$status" | head -1)
+
+if [[ $state == "Connected" ]]; then
+  location="${city:+$city, }${country}"
+  printf '{"text":"","class":"active","tooltip":"NordVPN: connected%s%s"}\n' \
+    "${location:+ — $location}" "${server:+ ($server)}"
+else
+  printf '{"text":"","class":"","tooltip":"NordVPN: %s"}\n' "${state:-unavailable}"
+fi
