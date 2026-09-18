@@ -74,6 +74,28 @@ _QuickNote/           Inbox for rapid capture
 | storage | `3. Resources/Storage/` |
 | vehicle | `3. Resources/Vehicles/` |
 
+## Choosing the Folder
+
+When the right bucket is not obvious from the routing table above, ask `vault-classify`:
+
+```bash
+printf '%s' "$NOTE_BODY" | vault-classify "Note Title"
+```
+
+It prints the top 2 buckets with probabilities and their destination folders.
+
+- **It suggests; you decide.** Benchmarked at 88% top-1 on this vault (vs 42.5% for always
+  guessing "hardware"). Roughly 1 note in 8 is wrong, so it never files on its own.
+- **Below confidence 0.8** it prints a warning — show the user both options and let them pick.
+- **Above 0.8** it is ~92% accurate; file there, and state which folder you chose so the
+  user can correct it in one reply.
+- Known-weak boundaries, check these yourself: *guide vs software* (instructions vs. the
+  thing itself) and *research vs area* (a one-off comparison vs. an ongoing responsibility).
+- It needs `TYPESAFE_API_KEY` and calls a paid API. Skip it when the routing table already
+  answers the question — most hardware and recipe notes need no classifier.
+- Do **not** pass the `status:` frontmatter field to it. That field is "active" on 148 of
+  171 notes, so it carries no signal; weighting it dropped accuracy from 88% to 61%.
+
 ## Frontmatter (required on every note)
 
 ```yaml

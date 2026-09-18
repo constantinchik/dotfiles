@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# vault-ask — answer a specific factual question from the Obsidian vault in ONE round trip.
+#
+#   vault-ask "what is the IP of Ana's floor lamp"
+#   vault-ask "what PSU does the floor lamp use" "floor lamp"
+#
+# Pipeline: obsidian search (fast, literal)  ->  TypeSafe/Jev re-rank (semantic)  ->  read top 2.
+# `obsidian search` returns results in PATH-ALPHABETICAL order, not by relevance, so the
+# re-rank step is what actually finds the right note. Benchmarked 5/7 top-1, 6/7 top-2 —
+# hence ALWAYS reading two notes, never just the winner.
+set -uo pipefail
+
+die() { echo "vault-ask: $*" >&2; exit 1; }
+[ $# -ge 1 ] || die "usage: vault-ask \"<question>\" [search terms]"
+[ -n "${TYPESAFE_API_KEY:-}" ] || die "TYPESAFE_API_KEY not set (see ~/.zshrc.secrets)"
+command -v jq >/dev/null || die "jq not found"
+command -v obsidian >/dev/null || die "obsidian CLI not found"
+
+QUESTION="$1"
+# Fall back to the question itself as search terms. `obsidian search` ORs its words, so
+# stopwords and apostrophes can zero it out — pass explicit terms when that happens.
+SEARCH="${2:-$QUESTION}"
+TOPN="${VAULT_ASK_TOPN:-2}"
+
+C=(); while IFS= read -r line; do [ -n "$line" ] && C+=("$line"); done \
+  < <(obsidian search query="$SEARCH" format=json 2>/dev/null | jq -r '.[]?' 2>/dev/null)
+
+if [ "${#C[@]}" -eq 0 ]; then
+  echo "No candidates for search terms: \"$SEARCH\""
+  echo "Re-ranking cannot recover a note that fast search never returned — retry with"
+  echo "fewer / different keywords (single distinctive nouns work best)."
+  exit 2
+fi
+
+# One candidate: nothing to rank.
+if [ "${#C[@]}" -eq 1 ]; then
+  echo "### 1 candidate (no re-rank needed): ${C[0]}"
+  echo "---"
+  obsidian read path="${C[0]}"
+  exit 0
+fi
+
+CRIT='{}'
+for i in "${!C[@]}"; do
+  CRIT=$(jq -c --arg k "c$i" --arg v "${C[$i]}" '. + {($k):$v}' <<<"$CRIT")
+done
+
+RESP=$(jq -n --arg q "$QUESTION" --argjson cr "$CRIT" '{
+  state: { user_question: $q },
+  model: "jev-latest",
+  questions: { pick: {
+    type: "choice",
+    instructions: "Which note file most likely contains the answer to `user_question`? Judge from the file path and title: the folder names carry meaning, and the filename usually names the subject.",
+    criteria: $cr } } }' \
+  | curl -sS --max-time 20 -X POST https://api.typesafe.ai/v1/systemone \
+      -H "Authorization: Bearer $TYPESAFE_API_KEY" \
+      -H "Content-Type: application/json" -d @-) || die "API request failed"
+
+if ! jq -e '.answers.pick' >/dev/null 2>&1 <<<"$RESP"; then
+  echo "vault-ask: re-rank failed, falling back to unranked search results." >&2
+  jq -r '.error? // .' <<<"$RESP" >&2
+  printf '%s\n' "${C[@]}"
+  exit 3
+fi
+
+echo "### ${#C[@]} candidates, re-ranked. Reading top $TOPN:"
+IDS=$(jq -r --argjson n "$TOPN" \
+  '.answers.pick.probabilities | to_entries | sort_by(-.value) | .[:$n][] | .key' <<<"$RESP")
+RANK=1
+for id in $IDS; do
+  p=$(jq -r --arg k "$id" '.answers.pick.probabilities[$k]' <<<"$RESP")
+  path="${C[${id#c}]}"
+  echo "  [$RANK] p=$p  $path"
+  RANK=$((RANK+1))
+done
+echo
+
+RANK=1
+for id in $IDS; do
+  path="${C[${id#c}]}"
+  echo "════════ [$RANK] $path"
+  obsidian read path="$path" 2>/dev/null || echo "(could not read)"
+  echo
+  RANK=$((RANK+1))
+done
