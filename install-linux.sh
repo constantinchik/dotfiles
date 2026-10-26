@@ -121,4 +121,7 @@ fi
 # Setup SSH keys (optional, interactive)
 "$SCRIPT_DIR/scripts/setup-ssh-keys.sh"
 
+# Install portable skill views after Stow; never adopt conflicting agent data.
+python3 "$SCRIPT_DIR/scripts/agents/skill_library.py" install --apply
+
 echo "Linux dotfiles installation complete!"
