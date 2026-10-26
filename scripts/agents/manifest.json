@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "skills": [
+    "obsidian",
+    "personal-obsidian-vault",
+    "knowledge-access",
+    "shared-skill-maintenance",
+    "wrapup",
+    "sync-vault"
+  ],
+  "clients": {
+    "agents": ".agents/skills",
+    "claude": ".claude/skills",
+    "codex": ".codex/skills",
+    "opencode": ".config/opencode/skills"
+  },
+  "extra_links": {
+    ".agents/skill-library": "scripts/agents",
+    ".claude/CLAUDE.md": "agents/adapters/claude/CLAUDE.md",
+    ".codex/AGENTS.md": "agents/adapters/codex/AGENTS.md",
+    ".codex/skills/obsidian-note-taker": "agents/adapters/codex/obsidian-note-taker"
+  },
+  "provenance": {
+    "obsidian": "Consolidated existing Hermes CLI skill and dotfiles Claude vault access; deprecated REST MCP removed.",
+    "personal-obsidian-vault": "Existing Hermes recipes/templates and Claude note-type guidance, sanitized and made agent-neutral.",
+    "wrapup": "Existing Codex skill and Claude command; CLI and shared scope rules.",
+    "sync-vault": "Existing Codex skill and Claude command; no copied runtime skill materialization.",
+    "knowledge-access": "Shared discovery contract based on approved audit.",
+    "shared-skill-maintenance": "Approved canonical-library maintenance and deterministic validation workflow."
+  }
+}

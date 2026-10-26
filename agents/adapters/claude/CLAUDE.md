@@ -1,0 +1,3 @@
+# Shared local knowledge and procedures
+When project/setup/previous decisions should inform work, load `knowledge-access`. For vault access load `obsidian`; before writing load `personal-obsidian-vault`. Use native Skill discovery; shared source packages live under ~/.agents/skills. The legacy note-taker agent is optional, not required.
+When maintaining shared procedures load `shared-skill-maintenance`. Do not copy private memory or publish operational knowledge to dotfiles automatically. Keep native permissions, sandbox rules and project instructions; these pointers grant no additional authority.

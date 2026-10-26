@@ -61,8 +61,8 @@ The `install-macos.sh` script auto-detects the server environment by:
 - Tmux prefix is `Ctrl+s`. Plugins managed by tpm.
 - `.zshrc.secrets` is gitignored and holds sensitive env vars.
 
-## Obsidian Vault
+## Shared agent skills and Obsidian
 
-Vault path: `/Users/cost/Library/Mobile Documents/iCloud~md~obsidian/Documents/Personal notes`
+Portable skill packages live in `agents/.agents/skills/`; `scripts/agents/README.md` describes installation, drift checks and provenance. Use the bounded Python installer rather than blanket Stow adoption or a reset. Preserve unrelated local modifications.
 
-When conversation produces vault-worthy content — guides, hardware/software configs, ideas, project docs, research, recipes, or learning — mention it and offer `/wrapup`. To save a single item on the spot, spawn the `note-taker` agent directly. The agent has all vault rules baked in; do not duplicate them here.
+Load `knowledge-access` for previous project/setup context; use `obsidian` and `personal-obsidian-vault` for vault work. The CLI selects the active vault; use vault-relative paths. Offer `wrapup` for inferred durable notes and obtain Save/Skip/Modify approval. The optional note-taker adapter reads the same shared rules rather than owning another copy.

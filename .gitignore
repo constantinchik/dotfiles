@@ -9,32 +9,37 @@ bin-macos/.local/bin/claude
 # CuaDriver.app-managed symlinks (CLI binary + skill dirs -> /Applications/CuaDriver.app);
 # machine-local, not tracked. Listed in every stow path the app/installer can land in.
 bin-macos/.local/bin/cua-driver
-claude/.claude/skills/cua-driver
 opencode/.config/opencode/skills/cua-driver
 opencode-server/.config/opencode/skills/cua-driver
 
 # uv-managed python shim from the (removed) hermes installer — use pyenv instead
 bin-macos/.local/bin/python3.11
 
-# Claude Code runtime data (keep only agents, commands, settings, skills)
-claude/.claude/backups/
-claude/.claude/cache/
-claude/.claude/file-history/
-claude/.claude/history.jsonl
-claude/.claude/plans/
-claude/.claude/plugins/
-claude/.claude/projects/
-claude/.claude/session-env/
-claude/.claude/sessions/
-claude/.claude/shell-snapshots/
-claude/.claude/image-cache/
-claude/.claude/paste-cache/
-claude/.claude/.credentials.json
-claude/.claude/.last-cleanup
-claude/.claude/remote/
-claude/.claude/stats-cache.json
-claude/.claude/tasks/
-claude/.claude/telemetry/
+# ~/.claude is currently directory-stowed: allowlist portable source, not
+# an ever-growing list of runtime/auth/account/cache filenames.
+claude/.claude/*
+!claude/.claude/agents/
+!claude/.claude/commands/
+!claude/.claude/settings.json
+!claude/.claude/skills/
+claude/.claude/skills/*
+!claude/.claude/skills/compress-pdf/
+!claude/.claude/skills/home-assistant/
 
 # Opencode server runtime data
 opencode-server/.config/opencode/opencode.jsonc
+
+# Generated skill views: source packages/adapters are tracked under agents/.
+opencode/.config/opencode/skills/obsidian
+opencode/.config/opencode/skills/personal-obsidian-vault
+opencode/.config/opencode/skills/knowledge-access
+opencode/.config/opencode/skills/shared-skill-maintenance
+opencode/.config/opencode/skills/wrapup
+opencode/.config/opencode/skills/sync-vault
+opencode-server/.config/opencode/skills/obsidian
+opencode-server/.config/opencode/skills/personal-obsidian-vault
+opencode-server/.config/opencode/skills/knowledge-access
+opencode-server/.config/opencode/skills/shared-skill-maintenance
+opencode-server/.config/opencode/skills/wrapup
+opencode-server/.config/opencode/skills/sync-vault
+scripts/agents/__pycache__/
