@@ -72,11 +72,25 @@ dotfiles/
 - `claude` - Claude app config
 - `ghostty` - Ghostty terminal config
 
+## Contributing
+
+Repository navigation is in [AGENTS.md](AGENTS.md); change boundaries and offline
+checks are in [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Installation
+
+Installation changes the host. Review the selected scripts before running them.
+The current Linux and macOS installers use `stow --adopt`, overrides and a blanket
+Git checkout that can discard tracked local edits, including adopted content.
+They also install software and change host settings; they are unsuitable as
+checks or as a way to update an existing dirty checkout. The documentation below
+does not change that script behavior. For a bounded update, use the manual
+inspection and reconciliation steps instead.
 
 ### Automatic Installation
 
-Simply run the main install script which auto-detects your OS:
+For an explicitly approved full installation on a prepared checkout, the main
+script auto-detects your OS:
 
 ```bash
 ./install.sh
@@ -118,17 +132,33 @@ On macOS:
 stow zsh zsh-macos nvim kitty lazygit tmux vscode yazi opencode misc yabai claude ghostty bin bin-macos
 ```
 
-#### Using --adopt
+#### Inspect and reconcile existing files
 
-To adopt existing files (then restore from git):
+From the repository root, inspect changes and simulate one intended package:
+
 ```bash
-stow -t ~ --adopt zsh nvim kitty lazygit tmux
-git checkout .
+git status --short
+git diff -- zsh/
+stow -n -v -t ~ zsh
 ```
+
+The Stow dry run reports planned links and conflicts without applying them.
+Before an approved apply, back up each conflicting target and each affected
+repository file to a private location outside the checkout; preserve symlinks
+and their targets as appropriate. Record the exact original paths. Compare the
+backup, local edits and committed version, then explicitly reconcile each file.
+Move only reviewed conflicting targets aside and repeat the dry run. Once its
+plan is approved, `stow -v -t ~ zsh` applies that single package.
+
+Avoid blanket adoption, overrides and checkout/reset recipes. If adoption is
+specifically required, review and approve its exact package/file scope first:
+`--adopt` moves existing target content into the repository and can overwrite
+package files. Inspect the resulting per-file diff and reconcile deliberately
+from the targeted backups; do not discard the whole working tree afterward.
 
 ## Post-Installation
 
-The automatic installation covers almost everything except tmux plugins.
+Tmux plugins require a separate installation step after the host setup.
 To install tmux plugins, press `Ctrl+s I` inside tmux.
 
 ## Tmux Highlights
@@ -159,8 +189,14 @@ Copy mode uses vi keys:
 
 ## Theme
 
-This config uses [Rosé Pine](https://rosepinetheme.com/) Moon across the
-terminal tooling where possible.
+Committed configurations use [Rosé Pine](https://rosepinetheme.com/) with
+per-tool variants: [Ghostty](ghostty/.config/ghostty/config),
+[tmux](tmux/.config/tmux/tmux.conf) and [Yazi](yazi/.config/yazi/theme.toml)
+select Moon; [Kitty's included theme](kitty/.config/kitty/theme.conf) and
+[btop](btop/.config/btop/btop.conf) use base Rosé Pine. The stored Kitty
+`themes/mocha.conf` is an alternative, not the theme selected by
+[kitty.conf](kitty/.config/kitty/kitty.conf). These describe repository defaults,
+not a claim about a running terminal or an initialized Neovim submodule.
 
 ## Font
 
