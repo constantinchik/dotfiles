@@ -166,5 +166,8 @@ elif [ -z "$MACOS_SETTINGS" ]; then
     fi
 fi
 
+# Install portable skill views after Stow; never adopt conflicting agent data.
+python3 "$SCRIPT_DIR/scripts/agents/skill_library.py" install --apply
+
 echo "macOS dotfiles installation complete!"
 

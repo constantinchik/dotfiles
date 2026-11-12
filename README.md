@@ -221,6 +221,10 @@ properly you need a Nerd Font installed.
   This will replace all the files under `~/` that are the same relatively to
   the backup folder.
 
+## Shared agent skills
+
+Portable skills live in `agents/.agents/skills/` and are linked into local agent discovery locations, not copied between agents. See [installation, drift checks and maintenance](scripts/agents/README.md). The bounded installer preserves unmanaged skills and refuses conflicts unless their exact managed paths are explicitly approved for backup/replacement. Do not run the full dotfiles installer merely to update shared skills.
+
 ## Useful Tools
 
 - `ncdu /` runs the disk scan for large files.
